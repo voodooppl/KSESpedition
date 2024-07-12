@@ -1,0 +1,26 @@
+<form #registerForm="ngForm" (ngSubmit)="register()">
+    <h2 class="text-center text-primary">Create account</h2>
+    <hr>
+    <div class="mb-3 form-floating">
+        <input [(ngModel)]="model.firstName" type="text" class="form-control" name="firstName" placeholder="First Name">
+        <label>First Name</label>
+    </div>
+    <div class="mb-3 form-floating">
+        <input [(ngModel)]="model.lastName" type="text" class="form-control" name="lastName" placeholder="Last Name">
+        <label>Last Name</label>
+    </div>
+    <div class="mb-3 form-floating">
+        <input [(ngModel)]="model.email" type="email" class="form-control" name="email" placeholder="Email">
+        <label>Email</label>
+    </div>
+    <div class="mb-3 form-floating">
+        <input [(ngModel)]="model.password" type="password" class="form-control" name="password" placeholder="Password">
+        <label>Password</label>
+    </div>
+    <hr>
+    <div class="form-group text-center">
+        <button class="btn btn-success me-2" type="submit">Register</button>
+        <button class="btn btn-outline-info me-2" type="button" (click)="cancel()">Cancel</button>
+    </div>
+
+</form>

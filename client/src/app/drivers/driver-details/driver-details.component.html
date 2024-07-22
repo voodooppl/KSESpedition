@@ -1,1 +1,25 @@
-<p>driver-details works!</p>
+<div class="container mt-3 mb-5">
+    <button class="btn btn-primary" routerLink="/drivers" routerLinkActive="active">
+        <fa-icon [icon]="faChevronLeft"></fa-icon>
+        Back
+    </button>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-6 d-flex justify-content-between">
+            <h2>First Name: {{ driver.firstName | titlecase}}</h2>
+            <h2>Last Name: {{ driver.lastName | titlecase}}</h2>
+        </div>
+    </div>
+</div>
+<p>CNP: {{ driver.cnp }}</p>
+<p>Telephone Number: {{ driver.telNumber }}</p>
+<p>Address: {{ driver.address }}</p>
+<p>Date of Birth: {{ driver.dateOfBirt }}</p>
+<p>Driver Licence Number: {{ driver.driverLicenceNumber }}</p>
+<p>Driver Licence Expiration Date: {{ driver.driverLicenceExpirationDate}}</p>
+<p>Driving Certificate Number: {{ driver.drivingCertificateNumber }}</p>
+<p>Driving Certificate Expiration Date: {{ driver.drivingCertificateExpirationDate}}</p>
+<p>Contract Number: {{ driver.contractNumber }}</p>
+<p>Contract Status: {{ driver.contractStatus }}</p>

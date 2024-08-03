@@ -1,16 +1,16 @@
-
     <div class="card mt-4">
         <div class="icon-container text-primary">
-            <fa-icon [icon]="faIdCard" class="fa-8x"></fa-icon>
+            <fa-icon [icon]="faIdCard" class="fa-6x"></fa-icon>
         </div>
+
         <div class="card-body">
-            <h5 class="card-title">{{ driver.firstName | titlecase }} {{driver.lastName | titlecase}}</h5>
-            <p class="card-text">Tel: {{driver.telNumber}}</p>
-            <p class="card-text">Contract status: 
-                <span [ngClass]="getStatusClass(driver.contractStatus)">{{getDriverContractStatus(driver.contractStatus)}}</span>
+            <h5 class="card-title">{{ driver().firstName | titlecase }} {{driver().lastName | titlecase}}</h5>
+            <p class="card-text">Tel: {{driver().telNumber}}</p>
+            <p class="card-text">Contract Status: 
+                <span [ngClass]="utility.getStatusClass(driver().contractStatus.toString())">{{driver().contractStatus}}</span>
             </p>
-            <p class="card-text">Driving certificate expiration date: 
-                <span [ngClass]="checkExpirationDate(driver.drivingCertificateExpirationDate)">{{driver.drivingCertificateExpirationDate}}</span></p>
-            <a class="btn btn-outline-info" routerLink="/driver-details" routerLinkActive="active" [state]="driver">View driver</a>
+            <p class="card-text">Data expirare permis conducere: 
+                <span [ngClass]="utility.checkExpirationDate(driver().driverLicenceExpirationDate)">{{driver().driverLicenceExpirationDate}}</span></p>
+            <a class="btn btn-outline-info" routerLink="/driver-details/{{driver().cnp}}" routerLinkActive="active">Driver details</a>
         </div>
 </div>

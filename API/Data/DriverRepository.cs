@@ -19,10 +19,12 @@ public class DriverRepository(DataContext context) : IDriversRepository
         return false;
     }
 
-    public async Task<bool> DeleteDriverAsync(Driver driver)
+    public async Task<bool> DeleteDriverAsync(string cnp)
     {
+        var driver = await context.Drivers.FirstOrDefaultAsync(d => d.CNP == cnp);
         if (driver != null)
         {
+            
             context.Drivers.Remove(driver);
             await context.SaveChangesAsync();
 
@@ -34,16 +36,25 @@ public class DriverRepository(DataContext context) : IDriversRepository
 
     public async Task<Driver?> GetDriverByCNPAsync(string cnp)
     {
-        return await context.Drivers.SingleOrDefaultAsync(d => d.CNP == cnp);
+        var driver =  await context.Drivers.FirstOrDefaultAsync(d => d.CNP == cnp);
+
+        return driver;
     }
 
-    public async Task<IEnumerable<Driver?>> GetDriverByNameAsync(string name)
-    {
-        return await context.Drivers.Where(d => d.FirstName.Contains(name) 
-                        || d.LastName.Contains(name)
-                        || (d.FirstName + " " + d.LastName).Contains(name)
-                        || (d.LastName + " " + d.FirstName).Contains(name)).ToListAsync();
-    }
+    // public async Task<Driver?> GetDriverByIdAsync(int id)
+    // {
+    //     var driver = await context.Drivers.FirstOrDefaultAsync(d => d.Id == id);
+
+    //     return driver;
+    // }
+
+    // public async Task<IEnumerable<Driver?>> GetDriverByNameAsync(string name)
+    // {
+    //     return await context.Drivers.Where(d => d.FirstName.Contains(name)
+    //                     || d.LastName.Contains(name)
+    //                     || (d.FirstName + " " + d.LastName).Contains(name)
+    //                     || (d.LastName + " " + d.FirstName).Contains(name)).ToListAsync();
+    // }
 
     public async Task<IEnumerable<Driver>> GetDriversAsync()
     {
@@ -55,8 +66,4 @@ public class DriverRepository(DataContext context) : IDriversRepository
         return await context.SaveChangesAsync() > 0;
     }
 
-    public void UpdateDriverAsync(Driver driver)
-    {
-        context.Entry(driver).State = EntityState.Modified;
-    }
 }

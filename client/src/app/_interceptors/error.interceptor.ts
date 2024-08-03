@@ -5,17 +5,18 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const toastr = inject(ToastrService);
   const router = inject(Router);
+  const toastr = inject(ToastrService);
 
   return next(req).pipe(
-    catchError(error => {
+    catchError(
+      error => {
       if (error) {
         switch (error.status) {
           case 400:
             if (error.error.errors) {
               const modalStateErrors = [];
-              for (var key in error.error.errors) {
+              for (const key in error.error.errors) {
                 if (error.error.errors[key]) {
                   modalStateErrors.push(error.error.errors[key]);
                 }

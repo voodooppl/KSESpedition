@@ -1,43 +1,48 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnInit, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Driver } from '../_models/driver';
-import { Observable, map, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DriversService implements OnInit {
+export class DriversService {
   private http = inject(HttpClient);
-  private baseUrl = 'https://localhost:5001/api/';
+  private baseUrl = environment.apiUrl;
   drivers = signal<Driver[]>([]);
 
-  ngOnInit(): void {
-    this.getDrivers();
+  getDrivers() {
+    return this.http.get<Driver[]>(this.baseUrl + 'drivers').subscribe({
+      next: drivers => this.drivers.set(drivers),
+    });
   }
 
-  getDrivers(){
-    return this.http.get<Driver[]>(this.baseUrl + 'drivers').pipe(
-      map(drvrs => {
-        if(drvrs)
-          {
-            console.log(drvrs);
-            this.drivers.set(drvrs);
-          };
+  getDriverByCnp(cnp: string) {
+    var driver = this.drivers().find(d => d.cnp === cnp);
+    if (driver !== undefined){
+      return of(driver);
+    }      
 
-          return drvrs;
+    return this.http.get<Driver>(this.baseUrl + 'drivers/' + cnp);
+  }
+
+  addNew(newDriver: Driver): Observable<Driver | null> {
+    this.drivers.update(drivers => [...drivers, newDriver]);
+
+    return this.http.post<Driver>(this.baseUrl + 'drivers/add-new-driver', newDriver);
+  }
+
+  updateDriver(driver: Driver) {
+
+    return this.http.put(this.baseUrl + 'drivers', driver).pipe(
+      tap(() => {
+        this.drivers.update(drivers => drivers.map(d => d.cnp === driver.cnp ? driver : d))
       })
     );
   }
 
-    
-  addNew(newDriver: Driver): Observable<Driver | null>{
-    
-    if (!newDriver || !newDriver.firstName || !newDriver.lastName) {
-      console.error('Invalid driver data:', newDriver);
-      return of(null);
-    }
-  
-    console.log('this is from drivers service' + newDriver);
-    return this.http.post<Driver>(this.baseUrl + 'drivers/add-new-driver', newDriver);
+  deleteDriver(cnp: string) {
+    return this.http.delete(this.baseUrl + 'drivers/driver-details/' + cnp);
   }
 }

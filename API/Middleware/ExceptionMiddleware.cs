@@ -11,12 +11,13 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         try
         {
             await next(context);
-        } catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             logger.LogError(ex, ex.Message);
             context.Response.ContentType = "aplication/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            
+
             var response = env.IsDevelopment()
                 ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace)
                 : new ApiException(context.Response.StatusCode, ex.Message, "Internal server error.");
@@ -26,7 +27,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
 
-            var json = JsonSerializer.Serialize(response, options); 
+            var json = JsonSerializer.Serialize(response, options);
 
             await context.Response.WriteAsync(json);
         }

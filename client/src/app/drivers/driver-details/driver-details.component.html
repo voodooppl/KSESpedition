@@ -1,25 +1,162 @@
+@if(driver){
 <div class="container mt-3 mb-5">
-    <button class="btn btn-primary" routerLink="/drivers" routerLinkActive="active">
-        <fa-icon [icon]="faChevronLeft"></fa-icon>
-        Back
-    </button>
-</div>
-
-<div class="container">
     <div class="row">
-        <div class="col-6 d-flex justify-content-between">
-            <h2>First Name: {{ driver.firstName | titlecase}}</h2>
-            <h2>Last Name: {{ driver.lastName | titlecase}}</h2>
+        <div class="col-1">
+            <button class="btn btn-primary" routerLink="/drivers" routerLinkActive="active">
+                <fa-icon [icon]="faChevronLeft"></fa-icon>
+                Back
+            </button>
         </div>
+        <div class="col-11">
+            <form [formGroup]="driverForm" (ngSubmit)="updateDriver()">
+                <div class="row">
+
+                    <div class="col-10">
+                        <div class="card p-3">
+                            <div class="col-6 d-flex justify-content-between">
+                                <h2>Nume: <strong>{{ driver.firstName | titlecase}} {{ driver.lastName |
+                                        titlecase}}</strong>
+                                </h2>
+                            </div>
+
+                            <tabset class="driver-tabset">
+                                <tab heading="Date personale">
+                                    @if (!isEditMode) {
+                                    <div class="d-flex justify-content-between align-items-between">
+                                        <p><strong>CNP:</strong> {{ driver.cnp }}</p>
+                                        <p><strong>Numar Telefon:</strong> {{ driver.telNumber }}</p>
+                                    </div>
+                                    <div>
+                                        <p><strong>Adresa:</strong> {{ driver.address }}</p>
+                                        <p><strong>Data Nastere:</strong> {{ driver.dateOfBirt }}</p>
+                                    </div>
+                                    }@else {
+                                    <div class="row">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex justify-content-end">
+                                                <p><strong>Numar Telefon:</strong></p>
+                                                <input style="height:0.6cm; width: fit-content;" type="tel"
+                                                    formControlName="telNumber" class="form-control"
+                                                    >
+                                                    <div class="mx-2" *ngIf="driverForm.controls['telNumber'].invalid && (driverForm.controls['telNumber'].dirty || driverForm.controls['telNumber'].touched)">
+                                                        <small *ngIf="driverForm.controls['telNumber'].errors?.['required']" class="text-danger">
+                                                            Phone number is required.
+                                                        </small>
+                                                        <small *ngIf="driverForm.controls['telNumber'].errors?.['pattern']" class="text-danger">
+                                                            Invalid phone number format.
+                                                        </small>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <p><strong>Adresa: </strong></p>
+                                            <textarea formControlName="address" class="form-control mx-2"></textarea>
+                                        </div>
+                                    </div>
+                                    }
+                                </tab>
+
+                                <tab heading="Informatii aditionale">
+                                    @if (!isEditMode) {
+                                    <div class="d-flex justify-content-between">
+                                        <p><strong>Serie Permis Conducere:</strong> {{ driver.driverLicenceNumber }}</p>
+                                        <p><strong>Data Expirare:</strong>
+                                            <span
+                                                [ngClass]="utility.checkExpirationDate(driver.driverLicenceExpirationDate)">
+                                                {{driver.driverLicenceExpirationDate}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p><strong>Driving Certificate Number:</strong> {{
+                                            driver.drivingCertificateNumber }}
+                                        </p>
+                                        <p><strong>Driving Certificate Expiration Date:</strong>
+                                            <span
+                                                [ngClass]="utility.checkExpirationDate(driver.drivingCertificateExpirationDate)">
+                                                {{driver.drivingCertificateExpirationDate}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p><strong>Numar Contract Angajare:</strong> {{ driver.contractNumber }}</p>
+                                        <p><strong>Status Contract:</strong>
+                                            <span [ngClass]="utility.getStatusClass(driver.contractStatus.toString())">
+                                                {{driver.contractStatus}}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    }@else {
+                                    <div class="row">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex">
+                                                <p><strong>Serie Permis Conducere:</strong></p>
+                                                <input style="height: 0.6cm; width: fit-content;" type="text"
+                                                    formControlName="driverLicenceNumber" class="form-control">
+                                            </div>
+                                            <div class="d-flex">
+                                                <p><strong>Data Expirare:</strong>
+                                                    <input type="date" formControlName="driverLicenceExpirationDate">
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex">
+                                                <p><strong>Numar Contract Angajare:</strong></p>
+                                                <input style="height: 0.6cm; width: fit-content;" type="text"
+                                                    formControlName="contractNumber" class="form-control">
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="mb-0 mr-2"><strong>Status Contract:</strong></p>
+                                                <select formControlName="contractStatus" class="form-control-sm w-auto">
+                                                    <option *ngFor="let status of driverContracStatuses"
+                                                        [value]="status.key">
+                                                        {{status.key}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                </tab>
+                                <tab heading="Istoric actiuni">
+                                    @for (action of driver.actionsLog; track $index) {
+                                    <p>{{action}}</p>
+                                    }
+                                </tab>
+                            </tabset>
+
+                        </div>
+                    </div>
+
+                    <div class="col-2">
+                        @if(!isEditMode){
+                        <button class="btn btn-primary" type="button" (click)="seEditMode()">
+                            Edit driver
+                        </button>
+
+                        }@else {
+                        <button [disabled]="!driverForm.dirty" type="submit" class="btn btn-success">
+                            Save modifications
+                        </button>
+
+                        <button class="btn btn-outline-primary" type="button" (click)="seEditMode()">
+                            Cancel
+                        </button>
+
+                        <button class="btn btn-danger" type="button" (click)="deleteDriver()">
+                            Delete driver
+                        </button>
+
+                        }
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
-<p>CNP: {{ driver.cnp }}</p>
-<p>Telephone Number: {{ driver.telNumber }}</p>
-<p>Address: {{ driver.address }}</p>
-<p>Date of Birth: {{ driver.dateOfBirt }}</p>
-<p>Driver Licence Number: {{ driver.driverLicenceNumber }}</p>
-<p>Driver Licence Expiration Date: {{ driver.driverLicenceExpirationDate}}</p>
-<p>Driving Certificate Number: {{ driver.drivingCertificateNumber }}</p>
-<p>Driving Certificate Expiration Date: {{ driver.drivingCertificateExpirationDate}}</p>
-<p>Contract Number: {{ driver.contractNumber }}</p>
-<p>Contract Status: {{ driver.contractStatus }}</p>
+
+}

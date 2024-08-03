@@ -1,27 +1,28 @@
 @if(isAddMode) {
     <app-add-new-driver (cancelAddDriver)="cancelIsAddMode($event)"></app-add-new-driver>
 }@else{
-    @if (drivers) {
+    @if (driversService.drivers()) {
         <div class="mx-auto">
-            <h1 class="text-primary text-center">Available drivers</h1>
+            <h1 class="text-primary text-center">All Drivers</h1>
         </div>
-            <div class="container">
-                <div class="row">
-                    <ng-container *ngFor="let driver of drivers" >
-                        <div class="col-4">
-                            <app-driver-card [driver]="driver"></app-driver-card>
-                        </div>
-                    </ng-container>
+        <div class="container">
+            <div class="row">
+                <ng-container *ngFor="let driver of driversService.drivers()">
+                    <div class="col-3">
+                        <app-driver-card [driver]="driver"></app-driver-card>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    }@else {
+        <p>No drivers found.</p>
+        }
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <button class="btn btn-lg btn-primary m-4" type="button" routerLink="/add-new-driver"
+                        routerLinkActive="active">Add Driver</button>
                 </div>
             </div>
-    }@else { 
-        <p>No drivers found.</p>
-    } 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-auto">
-                <button class="btn btn-lg btn-primary m-4" type="button" routerLink="/add-new-driver" routerLinkActive="active">Add new driver</button>
-            </div>
         </div>
-    </div>
 }

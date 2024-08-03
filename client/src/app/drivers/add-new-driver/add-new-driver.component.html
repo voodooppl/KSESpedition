@@ -1,31 +1,116 @@
-<div class="container mb-3">
+<div class="container justify-content-center align-items-center min-vh-100">
+    <div class="row justify-content-center">
+        <div class="card col-6 p-3">
+            <h2 class="text-center text-primary">Add new driver</h2>
+            <hr>
 
-    <form #registerForm="ngForm" (ngSubmit)="addNewDriver()">
-        <h2 class="text-center text-primary">Add new driver</h2>
-        <hr>
-        <div class="mb-3 form-floating">
-            <input [(ngModel)]="newDriver.firstName" type="text" class="form-control" name="firstName" placeholder="First Name" required>
-            <label>First Name</label>
-        </div>
-        <div class="mb-3 form-floating">
-            <input [(ngModel)]="newDriver.lastName" type="text" class="form-control" name="lastName" placeholder="Last Name">
-            <label>Last Name</label>
-        </div>
-        <div class="mb-3 form-floating">
-            <input [(ngModel)]="newDriver.cnp" type="text" class="form-control" name="text" placeholder="CNP">
-            <label>CNP</label>
-        </div>
-        <div class="mb-3 form-floating">
-            <input [(ngModel)]="newDriver.telNumber" type="tel" class="form-control" name="telNumber" placeholder="Tel Number">
-            <label>Tel Number</label>
-        </div>
-        <hr>
+            <form [formGroup]="addDriverForm" (ngSubmit)="addNewDriver()">
+                <div class="mb-3 form-floating">
+                    <input type="text" class="form-control" formControlName="firstName" placeholder="First Name">
+                    <div *ngIf="addDriverForm.controls['firstName'].invalid && 
+                        (addDriverForm.controls['firstName'].dirty || addDriverForm.controls['firstName'].touched)">
+                        <div *ngIf="addDriverForm.controls['firstName'].errors?.['required']">
+                            <small class="text-danger">First Name is required.</small>
+                        </div>
+                        <div *ngIf="addDriverForm.controls['firstName'].errors?.['minlength']">
+                            <small class="text-danger">First Name must be at least 3 characters long.</small>
+                        </div>
+                    </div>
+                    <label>First Name</label>
+                </div>
 
-        <div class="form-group text-center">
-            <button class="btn btn-success me-2" type="submit">Add</button>
-            <button class="btn btn-outline-info me-2" type="button" routerLink="/drivers" routerLinkActive="active">Cancel</button>
+                <div class="mb-3 form-floating">
+                    <input type="text" class="form-control" formControlName="lastName" placeholder="Last Name">
+                    <div *ngIf="addDriverForm.controls['lastName'].invalid && 
+                    (addDriverForm.controls['lastName'].dirty || addDriverForm.controls['lastName'].touched)">
+                        <div *ngIf="addDriverForm.controls['lastName'].errors?.['required']">
+                            <small class="text-danger">Last Name is required.</small>
+                        </div>
+                        <div *ngIf="addDriverForm.controls['lastName'].errors?.['minlength']">
+                            <small class="text-danger">Last Name must be at least 3 characters long.</small>
+                        </div>
+                    </div>
+                    <label>Last Name</label>
+                </div>
+
+                <div class="row g-0">
+                    <div class="col-6 mb-3 form-floating">
+                        <input type="text" class="form-control" formControlName="cnp" placeholder="CNP">
+                        <div *ngIf="addDriverForm.controls['cnp'].invalid && 
+                        (addDriverForm.controls['cnp'].dirty || addDriverForm.controls['cnp'].touched)">
+                            <div *ngIf="addDriverForm.controls['cnp'].errors?.['required']">
+                                <small class="text-danger">CNP is required.</small>
+                            </div>
+                            <div *ngIf="(addDriverForm.controls['cnp'].errors?.['pattern'] || 
+                            addDriverForm.controls['cnp'].errors?.['minlength'] ||
+                            addDriverForm.controls['cnp'].errors?.['maxlength'])">
+                                <small class="text-danger">CNP must be 13 digits.</small>
+                            </div>
+                        </div>
+                        <label class="ms-3">CNP</label>
+                    </div>
+
+                    <div class="col-6 mb-3 form-floating">
+                        <input type="text" class="form-control" formControlName="telNumber" placeholder="Tel Number">
+                        <div *ngIf="addDriverForm.controls['telNumber'].invalid && (
+                            addDriverForm.controls['telNumber'].dirty || addDriverForm.controls['telNumber'].touched)">
+                            <div *ngIf="addDriverForm.controls['telNumber'].errors?.['required']">
+                                <small class="text-danger">Tel number is required.</small>
+                            </div>
+                            <div *ngIf="addDriverForm.controls['telNumber'].errors?.['pattern']">
+                                <small class="text-danger">Tel number should contain only digits.</small>
+                            </div>
+                        </div>
+                        <label class="ms-3">Tel Number</label>
+                    </div>
+                </div>
+
+                <div class="mb-3 form-floating">
+                    <textarea formControlName="address" class="form-control" placeholder="Address"></textarea>
+                    <label>Address</label>
+                </div>
+
+                <div class="row justify-content-between mb-3">
+                    <div class="col-md-5 me-3 form-floating">
+                        <input type="text" class="form-control me-3" formControlName="driverLicenceNumber"
+                            placeholder="Driver Licence Number">
+                        <label class="ms-3">Driver Licence Number</label>
+                    </div>
+
+                    <div class="col-md-5 form-floating ">
+                        <input type="date" class="form-control" formControlName="driverLicenceExpirationDate"
+                            placeholder="Driver Licence Expiration Date">
+                        <label class="ms-3">Expiration Date</label>
+                    </div>
+                </div>
+
+                <div class="row justify-content-between">
+                    <div class="col-md-5 me-3 form-floating">
+                        <input type="text" class="form-control me-3" formControlName="contractNumber"
+                            placeholder="Contract Number">
+                        <label class="ms-3">Contract Number</label>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="me-3">Contract Status</label>
+                        <div class="row mx-1">
+                            <select formControlName="contractStatus" class="form-control-sm">
+                                <option *ngFor="let status of driverContracStatuses" [value]="status.key">
+                                    {{status.key}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="form-group text-center">
+                    <button [disabled]="addDriverForm.invalid || addDriverForm.pristine" class="btn btn-success me-2" type="submit">Add</button>
+                    <button class="btn btn-outline-info me-2" type="button" routerLink="/drivers"
+                        routerLinkActive="active">Cancel</button>
+                </div>
+
+            </form>
         </div>
-    
-    </form>
+    </div>
 </div>
-

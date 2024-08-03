@@ -11,6 +11,8 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { AddNewDriverComponent } from './drivers/add-new-driver/add-new-driver.component';
 import { DriverDetailsComponent } from './drivers/driver-details/driver-details.component';
+import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { deleteGuard } from './_guards/delete.guard';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -20,6 +22,9 @@ export const routes: Routes = [
         children: [
             {path: 'drivers', component: DriversComponent},
             {path: 'drivers/:id', component: DriverCardComponent},
+            {path: 'add-new-driver', component: AddNewDriverComponent},
+            {path: 'driver-details/:cnp', component: DriverDetailsComponent,
+                 canDeactivate: [preventUnsavedChangesGuard]},
             {path: 'trucks', component: TrucksComponent},
             {path: 'trucks/:id', component: TruckDetailsComponent},
             {path: 'jobs', component: JobsComponent},
@@ -28,7 +33,5 @@ export const routes: Routes = [
     },
     {path: 'not-found', component: NotFoundComponent},
     {path: 'server-error', component: ServerErrorComponent},
-    {path: 'add-new-driver', component: AddNewDriverComponent},
-    {path: 'driver-details', component: DriverDetailsComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'},
 ];

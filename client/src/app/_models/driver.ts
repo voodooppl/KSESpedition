@@ -2,6 +2,8 @@ import { DriverContractStatuses } from "./driverContractStatuses";
 
 export interface Driver 
 {
+    id: number,
+    creationDate: Date | undefined,
     firstName: string,
     lastName: string,
     cnp: string,

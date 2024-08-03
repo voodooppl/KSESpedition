@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DriversService } from '../../_services/drivers.service';
 import { Driver } from '../../_models/driver';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -7,18 +7,17 @@ import { DriverCardComponent } from "../driver-card/driver-card.component";
 import { NgFor } from '@angular/common';
 
 @Component({
-    selector: 'app-drivers',
-    standalone: true,
-    templateUrl: './drivers.component.html',
-    styleUrl: './drivers.component.css',
-    imports: [RouterLink, RouterLinkActive, AddNewDriverComponent, DriverCardComponent, NgFor]
+  selector: 'app-drivers',
+  standalone: true,
+  templateUrl: './drivers.component.html',
+  styleUrl: './drivers.component.css',
+  imports: [RouterLink, RouterLinkActive, AddNewDriverComponent, DriverCardComponent, NgFor]
 })
-export class DriversComponent {
-  private driversService = inject(DriversService);
-  drivers: Driver[] = [];
+export class DriversComponent implements OnInit{
+  driversService = inject(DriversService);
   isAddMode = false;
 
-  constructor() {
+  ngOnInit(): void {
     this.getDrivers();
   }
 
@@ -26,16 +25,12 @@ export class DriversComponent {
     this.isAddMode = !this.isAddMode;
   }
 
-  cancelIsAddMode(event: boolean){
+  cancelIsAddMode(event: boolean) {
     this.isAddMode = event;
   }
 
   getDrivers() {
-    this.driversService.getDrivers().subscribe(
-      drvrs => {
-        this.drivers = drvrs;
-      }
-    )
+    this.driversService.getDrivers();
   }
 
 }

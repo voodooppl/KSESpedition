@@ -1,43 +1,30 @@
-﻿using API.Entities;
-using API.Enums;
+﻿using API.DTOs;
+using API.Entities;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-// [Authorize]
-public class DriversController(IDriversRepository driversRepository) : BaseApiController
+[Authorize]
+public class DriversController(IDriversRepository driversRepository, IMapper mapper) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Driver>>> GetDriversAsync()
     {
         var drivers = await driversRepository.GetDriversAsync();
 
-
         return Ok(drivers);
     }
 
-    // [HttpGet("{attribute}")]
-    // public async Task<ActionResult<Driver>> GetDriverByAttribute(string attribute)
-    // {
-    //     var driver = await driversRepository.GetDriverByCNPAsync(attribute);
-    //     if (driver == null) 
-    //     {
-    //         driver = await driversRepository.GetDriverByNameAsync(attribute);
-    //     }
+    [HttpGet("{cnp}")]
+    public async Task<ActionResult<Driver>> GetDriverByCnp(string cnp)
+    {
+        var driver = await driversRepository.GetDriverByCNPAsync(cnp);
+        if (driver == null) return NotFound();
 
-    //     return NotFound();
-
-    //     return Ok(driver);
-    // }
-
-    // [HttpGet("/{name}")]
-    // public async Task<ActionResult<IEnumerable<Driver>>> GetDriverByName(string name)
-    // {
-    //     var driver = await driversRepository.GetDriverByNameAsync(name);
-    //     if (driver == null) return NotFound();
-
-    //     return Ok(driver);
-    // }
+        return Ok(driver);
+    }
 
     [HttpPost("add-new-driver")]
     public async Task<ActionResult<Driver>> AddDriverAsync(Driver driver)
@@ -49,25 +36,36 @@ public class DriversController(IDriversRepository driversRepository) : BaseApiCo
         if (driver != null)
         {
             driver.DateOfBirt = driver.GetDateOfBirth(driver);
-            driver.DriverLicenceExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            driver.DrivingCertificateExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            driver.ContractStatus = DriverContractStatuses.Active;
-        }
+            driver.ActionsLog.Add($"{DateTime.UtcNow} - Soferul {driver.FirstName + ' ' + driver.LastName} a fost adaugat.");
 
-        if (!await driversRepository.AddDriverAsync(driver))
-        {
-            throw new Exception("Unable to add driver.");
+            if (!await driversRepository.AddDriverAsync(driver))
+            {
+                throw new Exception("Unable to add driver.");
+            }
         }
 
         return Ok(driver);
     }
 
-    [HttpDelete]
-    public async Task<ActionResult<bool>> DeleteDriverAsync(Driver driver)
+    [HttpPut]
+    public async Task<ActionResult> UpdateDriver(UpdateDriverDto updateDriverDto)
     {
-        if (driver == null) return BadRequest("NUll driver.");
-        if (await driversRepository.GetDriverByCNPAsync(driver.CNP) == null) return BadRequest("Selected driver doesn't exist.");
+        var selectedDriver = await driversRepository.GetDriverByCNPAsync(updateDriverDto.CNP);
 
-        return Ok(await driversRepository.DeleteDriverAsync(driver));
+        if (selectedDriver == null) return BadRequest("Acest sofer nu a putut fi gasit.");
+
+        mapper.Map(updateDriverDto, selectedDriver);
+
+        if (await driversRepository.SaveAllAsync()) return NoContent();
+
+        return BadRequest("Nu s-a putut finaliza salvarea.");
+    }
+
+    [HttpDelete("driver-details/{cnp}")]
+    public async Task<ActionResult<bool>> DeleteDriverAsync(string cnp)
+    {
+        if (cnp == null) return BadRequest("Null cnp.");
+
+        return Ok(await driversRepository.DeleteDriverAsync(cnp));
     }
 }

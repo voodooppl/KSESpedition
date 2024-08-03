@@ -1,19 +1,22 @@
 <div class="container mt-5">
     <div class="container text-primary" style="text-align: center;">
-        @if (!registerMode) {
         <h1>Manage your fleet</h1>
         <p class="lead">Keep track of your drivers, your trucks and your transport jobs.</p>
+        @if(!accountService.currentUser()){
 
-        <div class="text-center">
-            <button class="btn btn-primary btn-lg me-2" (click)="registerToggle()">Register</button>
-            <button class="btn btn-outline-info btn-lg me-2">Learn more</button>
-        </div>
-        }@else {
-        <div class="row justify-content-center">
-            <div class="col-3">
-                <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+            @if (!registerMode) {
+            <div class="text-center">
+                <button class="btn btn-primary btn-lg me-2" (click)="registerToggle()">Register</button>
+                <button class="btn btn-outline-info btn-lg me-2">Learn more</button>
             </div>
-        </div>
+            }@else {
+            <div class="row justify-content-center">
+                <div class="col-3">
+                    <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+                </div>
+            </div>
+            }
         }
+
     </div>
 </div>

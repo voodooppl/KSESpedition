@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "4zGe+EPcSiYEA1qsDGPIcshvfZybqEgsYGJ3noSk8JdNz/FL9jqswRF9/8FeNi3FGxYz4AzaUi3U39f8BYRx1Q==",
+  "dgSpecHash": "vFBIhTaVIzIuyTa+lysRl8Vh0v8rc4Zc1InEQuY4qn7aEevNLDeni+zXX82GJLpBfwygz9pc+H1BHbF89Ou1Jw==",
   "success": true,
   "projectFilePath": "D:\\RemoteLearning\\KSESpedition\\API\\API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\SUNRISE\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\SUNRISE\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\SUNRISE\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.6\\microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512",
     "C:\\Users\\SUNRISE\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.0\\microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",

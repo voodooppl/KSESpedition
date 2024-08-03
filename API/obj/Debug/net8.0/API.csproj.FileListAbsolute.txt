@@ -134,4 +134,4 @@ D:\RemoteLearning\KSESpedition\API\obj\Debug\net8.0\refint\API.dll
 D:\RemoteLearning\KSESpedition\API\obj\Debug\net8.0\API.pdb
 D:\RemoteLearning\KSESpedition\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 D:\RemoteLearning\KSESpedition\API\obj\Debug\net8.0\ref\API.dll
-D:\RemoteLearning\KSESpedition\API\obj\Debug\net8.0\API.sourcelink.json
+D:\RemoteLearning\KSESpedition\API\bin\Debug\net8.0\AutoMapper.dll

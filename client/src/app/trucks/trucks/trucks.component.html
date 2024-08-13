@@ -1,1 +1,24 @@
-<p>trucks works!</p>
+@if(trucksService.trucks()){
+<div class="mx-auto">
+    <h1 class="text-primary text-center">All Trucks</h1>
+</div>
+
+<div class="row">
+    <ng-container *ngFor="let truck of trucksService.trucks()">
+        <div class="col-3">
+            <app-truck-card [truck]="truck"></app-truck-card>
+        </div>
+    </ng-container>
+</div>
+
+}@else{
+<p>No drivers found.</p>
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <button class="btn btn-lg btn-primary m-4" type="button" routerLink="/add-new-truck"
+                routerLinkActive="active">Add Truck</button>
+        </div>
+    </div>
+</div>

@@ -1,1 +1,384 @@
-<p>truck-details works!</p>
+<div class="container mt-3 mb-5">
+    <div class="row">
+        <div class="col-1">
+            <button class="btn btn-primary" routerLink="/trucks" routerLinkActive="active">
+                <i class="fa-solid fa-chevron-left"></i>
+                Back
+            </button>
+        </div>
+        @if (!isEditMode) {
+        <div class="col-9">
+            <div class="row">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between">
+                        <h5>Numar Inmatriculare: <strong>{{ truck.licenceNumber | uppercase}} </strong> </h5>
+                        <h5>VIN: <strong> {{ truck.vin | uppercase}} </strong> </h5>
+
+                    </div>
+                    <tabset class="driver-tabset">
+                        <tab heading="Date identificare">
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Manufacturer: </strong>{{truck.manufacturer | uppercase}}</p>
+                                <p><strong>Model: </strong>{{truck.model | uppercase}}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>KM on Board: </strong>{{truck.kmOnBoard}}</p>
+                                <p><strong>Fuel Type: </strong> {{fuelTypes[truck.fuelType].key}}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Owner: </strong> {{truck.owner | uppercase}}</p>
+                                <p><strong>Status: </strong>{{truckStatuses[truck.status].key}}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Engine capacity: </strong> {{truck.engineCapacity}}</p>
+                                <p><strong>Horsepower: </strong> {{truck.horsePower}}</p>
+                                <p><strong>Fabrication Date: </strong> {{truck.fabricationDate}}</p>
+                            </div>
+
+
+                            <div>
+                                <p><strong>Detalii suplimentare</strong></p>
+                                <div class="card p-3">
+                                    <div *ngFor="let line of detailLines">
+                                        <p>{{line}}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </tab>
+
+                        <tab heading="Informatii suplimentare">
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>ITP Expiration Date: </strong> {{truck.itpExpirationDate}}</p>
+                                <p><strong>Insurance Expiration Date: </strong> {{truck.insurranceExpirationDate}}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>RoVignette Expiration Date: </strong> {{truck.roVignetteExpirationDate}}</p>
+                                <p><strong>German Vignette Expiration Date: </strong>
+                                    {{truck.germanVignetterExpirationDate}}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Next Revision Date: </strong> {{truck.nextRevisionDate}}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Driver: </strong> {{truck.driver}}</p>
+                                <p><strong>Job: </strong> {{truck.job}}</p>
+                            </div>
+
+                        </tab>
+
+                        <tab heading="Istoric actiuni">
+                            @for (action of truck.log; track $index) {
+                            <p> {{action}}</p>
+                            }
+                        </tab>
+
+                    </tabset>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-2">
+            <button class="btn btn-primary" type="button" (click)="setEditMode()">
+                <i class="fa-regular fa-pen-to-square"></i>
+                Edit truck
+            </button>
+        </div>
+
+
+        }@else {
+        <div class="col-11">
+            <form [formGroup]="truckForm" (ngSubmit)="updateTruck()">
+                <div class="row">
+                    <div class="col-10">
+                        <div class="card p-3">
+
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <div class="col-6 pt-1">
+                                        <h5>Numar Inmatriculare: </h5>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <input type="text" formControlName="licenceNumber" placeholder="Licence Number"
+                                            class="form-control">
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="col-2 pt-1">
+                                        <h5>VIN: </h5>
+                                    </div>
+                                    <div class="col-10 mb-3">
+                                        <input type="text" formControlName="vin" class="form-control"
+                                            placeholder="VIN number">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <tabset class="driver-tabset">
+
+                                <tab heading="Date identificare">
+
+                                    <div class="d-flex justify-content-between">
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Manufacturer:</strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="text" formControlName="manufacturer"
+                                                    placeholder="Manufacturer" class="form-control">
+                                                <div *ngIf="truckForm.controls['manufacturer'].invalid && (
+                                                            truckForm.controls['manufacturer'].dirty || truckForm.controls['manufacturer'].touched
+                                                        )">
+                                                    <small class="text-danger"
+                                                        *ngIf="truckForm.controls['manufacturer'].errors?.['required']">
+                                                        Manufacturer is required
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p class="ms-2"><strong>Model:</strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="text" formControlName="model"
+                                                    placeholder="Model" class="form-control">
+                                                <div *ngIf="truckForm.controls['model'].invalid && (
+                                                            truckForm.controls['model'].dirty || truckForm.controls['model'].touched
+                                                        )">
+                                                    <small class="text-danger"
+                                                        *ngIf="truckForm.controls['model'].errors?.['required']">
+                                                        Model is required
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>KM on Board: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="number" formControlName="kmOnBoard"
+                                                    placeholder="KM on Board" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Fuel Type: </strong></p>
+                                            </div>
+                                            <div>
+                                                <select formControlName="fuelType" class="form-control-sm w-auto ms-1">
+                                                    <option *ngFor="let fuel of fuelTypes" [ngValue]="fuel.value">
+                                                        {{fuel.key}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Owner: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="text" formControlName="owner"
+                                                    placeholder="Owner" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Truck Status: </strong></p>
+                                            </div>
+                                            <div>
+                                                <select formControlName="status" class="form-control-sm w-auto ms-1">
+                                                    <option *ngFor="let status of truckStatuses"
+                                                        [ngValue]="status.value">
+                                                        {{status.key}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Engine Capacity: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="number"
+                                                    formControlName="engineCapacity" class="form-control"
+                                                    placeholder="Engine Capacity">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-item ms-2 me-2">
+                                            <div>
+                                                <p><strong>HorsePower: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="number" formControlName="horsePower"
+                                                    class="form-control" placeholder="Horse Power">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Fabrication Date: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="date"
+                                                    formControlName="fabricationDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p><strong>Detalii suplimentare: </strong></p>
+                                        <textarea formControlName="details" placeholder="Detalii suplimentare"
+                                            class="form-control" rows="4">
+                                        </textarea>
+                                    </div>
+
+                                </tab>
+
+                                <tab heading="Informatii suplimentare">
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>ITP Expiration Date: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="date"
+                                                    formControlName="itpExpirationDate" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Insurance Expiration Date: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="date"
+                                                    formControlName="insurranceExpirationDate" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>RoVignette Expiration Date: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="date"
+                                                    formControlName="roVignetteExpirationDate" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>German Vignette Expiration Date: </strong></p>
+                                            </div>
+                                            <div>
+                                                <input style="height: 0.6cm;" type="date"
+                                                    formControlName="germanVignetterExpirationDate"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex">
+                                        <div>
+                                            <p><strong>Next Revision Date: </strong></p>
+                                        </div>
+                                        <div>
+                                            <input style="height: 0.6cm;" type="date" formControlName="nextRevisionDate"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Assigned driver: </strong></p>
+                                            </div>
+                                            <div class="ms-2">
+                                                <select style="height: 0.6cm;" formControlName="driver"
+                                                    class="form-control">
+                                                    <option>
+                                                        <!-- Truck Here -->
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <div>
+                                                <p><strong>Assigned job: </strong></p>
+                                            </div>
+                                            <div class="ms-2">
+                                                <select style="height: 0.6cm;" formControlName="job"
+                                                    class="form-control">
+                                                    <option>
+                                                        <!-- Job here -->
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </tab>
+
+                                <tab heading="Istoric actiuni">
+                                    @for (action of truck.log; track $index) {
+                                    <p> {{action}}</p>
+                                    }
+                                </tab>
+
+                            </tabset>
+
+                        </div>
+                    </div>
+
+                    <div class="col-2">
+                        <button [disabled]="!truckForm.dirty" type="submit" class="btn btn-success">
+                            <i class="fa-regular fa-floppy-disk"></i>
+                            Save modifications
+                        </button>
+
+                        <button class="btn btn-outline-primary" type="button" (click)="setEditMode()">
+                            <i class="fa-solid fa-xmark"></i>
+                            Cancel
+                        </button>
+
+                        <button class="btn btn-danger" type="button" (click)="deleteTruck()">
+                            <i class="fa-regular fa-trash-can"></i>
+                            Delete driver
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        }
+    </div>
+</div>

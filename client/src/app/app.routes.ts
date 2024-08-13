@@ -12,26 +12,41 @@ import { ServerErrorComponent } from './errors/server-error/server-error.compone
 import { AddNewDriverComponent } from './drivers/add-new-driver/add-new-driver.component';
 import { DriverDetailsComponent } from './drivers/driver-details/driver-details.component';
 import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
-import { deleteGuard } from './_guards/delete.guard';
+import { AddNewTruckComponent } from './trucks/add-new-truck/add-new-truck.component';
 
 export const routes: Routes = [
-    {path: '', component: HomeComponent},
-    {path: '', 
+    { path: '', component: HomeComponent },
+    {
+        path: '',
         runGuardsAndResolvers: 'always',
         canActivate: [authGuard],
         children: [
-            {path: 'drivers', component: DriversComponent},
-            {path: 'drivers/:id', component: DriverCardComponent},
-            {path: 'add-new-driver', component: AddNewDriverComponent},
-            {path: 'driver-details/:cnp', component: DriverDetailsComponent,
-                 canDeactivate: [preventUnsavedChangesGuard]},
-            {path: 'trucks', component: TrucksComponent},
-            {path: 'trucks/:id', component: TruckDetailsComponent},
-            {path: 'jobs', component: JobsComponent},
-            {path: 'jobs/:id', component: JobDetailsComponent},
+            { path: 'drivers', component: DriversComponent },
+            // { path: 'drivers/:id', component: DriverCardComponent },
+            {
+                path: 'add-new-driver', component: AddNewDriverComponent,
+                canDeactivate: [preventUnsavedChangesGuard]
+            },
+            {
+                path: 'driver-details/:cnp', component: DriverDetailsComponent,
+                canDeactivate: [preventUnsavedChangesGuard]
+            },
+
+            { path: 'trucks', component: TrucksComponent },
+            {
+                path: 'truck-details/:id', component: TruckDetailsComponent,
+                canDeactivate: [preventUnsavedChangesGuard]
+            },
+            {
+                path: 'add-new-truck', component: AddNewTruckComponent,
+                canDeactivate: [preventUnsavedChangesGuard]
+            },
+
+            { path: 'jobs', component: JobsComponent },
+            { path: 'jobs/:id', component: JobDetailsComponent },
         ]
     },
-    {path: 'not-found', component: NotFoundComponent},
-    {path: 'server-error', component: ServerErrorComponent},
-    {path: '**', component: HomeComponent, pathMatch: 'full'},
+    { path: 'not-found', component: NotFoundComponent },
+    { path: 'server-error', component: ServerErrorComponent },
+    { path: '**', component: HomeComponent, pathMatch: 'full' },
 ];

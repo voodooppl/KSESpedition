@@ -1,33 +1,30 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UtilityService } from '../../_services/utility.service';
-import { DriverContractStatuses, getEnumValues } from '../../_models/driverContractStatuses';
+import { DriverContractStatuses } from '../../_models/driverContractStatuses';
 import { DriversService } from '../../_services/drivers.service';
 import { Driver } from '../../_models/driver';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { AccountService } from '../../_services/account.service';
+import { CanComponentDeactivate } from '../../_guards/prevent-unsaved-changes.guard';
 
 @Component({
   selector: 'app-driver-details',
   standalone: true,
-  imports: [FontAwesomeModule, RouterLink, RouterLinkActive, TitleCasePipe, CommonModule, TabsModule,  ReactiveFormsModule],
+  imports: [FontAwesomeModule, RouterLink, RouterLinkActive, TitleCasePipe, CommonModule, TabsModule, ReactiveFormsModule],
   templateUrl: './driver-details.component.html',
   styleUrl: './driver-details.component.css'
 })
-export class DriverDetailsComponent implements OnInit {
-  // @ViewChild('editForm') editForm?: NgForm;
+export class DriverDetailsComponent implements OnInit, CanComponentDeactivate {
   driverForm!: FormGroup;
   private router = inject(Router);
   private route = inject(ActivatedRoute)
-  private accountService = inject(AccountService);
   private toastr = inject(ToastrService);
   private fb = inject(FormBuilder);
-  private datePipe = inject(DatePipe);
   driversService = inject(DriversService);
   utility = inject(UtilityService);
 
@@ -35,7 +32,7 @@ export class DriverDetailsComponent implements OnInit {
   faChevronLeft = faChevronLeft;
   isEditMode: boolean = false;
   isDeleting: boolean = false;
-  driverContracStatuses = getEnumValues(DriverContractStatuses);
+  driverContracStatuses = this.utility.getEnumValues(DriverContractStatuses);
 
   //this is a guard for the browser, for unsaved changes;
   @HostListener('window:beforeunload', ['$event']) notify($event: any) {
@@ -45,24 +42,37 @@ export class DriverDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.driverForm = this.fb.group({
-      cnp: ['', Validators.required],
-      telNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      address: ['', Validators.required],
-      dateOfBirt: ['', Validators.required],
-      driverLicenceNumber: ['', Validators.required],
-      driverLicenceExpirationDate: ['', Validators.required],
-      contractNumber: ['', Validators.required],
-      contractStatus: ['', Validators.required],
-      actionsLog: ['', Validators.required]
-    })
-
     this.getDriverByCnp();
+
+    this.driverForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.minLength(3)]],
+      lastName: ['', [Validators.required, Validators.minLength(3)]],
+      cnp: ['', [Validators.required, Validators.minLength(13),
+      Validators.maxLength(13),
+      Validators.pattern('^[0-9]*$')]],
+      telNumber: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      address: [''],
+      employer: [''],
+      idNumber: [''],
+      idNumberExpirationDate: [''],
+      driverLicenceNumber: [''],
+      driverLicenceExpirationDate: [''],
+      contractNumber: [''],
+      contractStatus: [''],
+      details: [''],
+      log: [''],
+      truck: [''],
+      job: [''],
+    })
+  }
+
+  canDeactivate() {
+    return this.driverForm.dirty;
   }
 
   getDriverContractStatus(status: DriverContractStatuses | undefined) {
     if (status == null) return;
-    
+
     return DriverContractStatuses[status];
   }
 
@@ -75,18 +85,16 @@ export class DriverDetailsComponent implements OnInit {
     });
   }
 
-  seEditMode() {
+  setEditMode() {
     this.isEditMode = !this.isEditMode;
     this.driverForm.reset(this.driver);
   }
 
   updateDriver() {
-    this.getActionLogs();
-
     this.driversService.updateDriver(this.driverForm.value).subscribe({
       next: () => {
-        this.toastr.success('Soferul a fost modificat cu success.')
         this.getDriverByCnp();
+        this.toastr.success('Soferul a fost modificat cu success.')
         this.isEditMode = false;
         this.driverForm.reset(this.driver);
       }
@@ -115,30 +123,45 @@ export class DriverDetailsComponent implements OnInit {
     return true;
   }
 
-  private getEditedFormValues() {
-    const editedValues: { [key: string]: any } = {};
-    if (this.driverForm) {
-      Object.keys(this.driverForm.controls).forEach(key => {
-        const control = this.driverForm.get(key);
-        if (control?.dirty) {
-          editedValues[key] = control.value;
-        }
-      });
-    }
-
-    return editedValues;
+  get detailLines() {
+    return this.driver.details.split('\n');
   }
 
-  private getActionLogs() {
-    const formValues = this.getEditedFormValues();
+  // private getActionLogs() {
+  //   const formValues = this.getEditedFormValues();
 
-    const concatenatedString = Object.entries(formValues)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join('; ');
+  //   const concatenatedString = Object.entries(formValues)
+  //     .map(([key, value]) => `${key}: ${value}`)
+  //     .join('; ');
 
-    var actionLog = this.datePipe.transform(Date.now(), 'dd/MM/yyyy HH:mm:ss') + ' Userul '
-      + this.accountService.currentUser()?.firstName + ' a facut urmatoarele modificari: ' + concatenatedString;
-    this.driver.actionsLog.push(actionLog);
-  }
+  //   var actionLog = this.datePipe.transform(Date.now(), 'dd/MM/yyyy HH:mm:ss') + ' Userul '
+  //     + this.accountService.currentUser()?.firstName + ' a facut urmatoarele modificari: ' + concatenatedString;
+  //   this.driver.log.push(actionLog);
+  // }
+
+  // private processFormValues(callback: (controlName: string, value: any) => void) {
+  //   if (this.driverForm) {
+  //     for (const controlName in this.driverForm.controls) {
+  //       const control = this.driverForm.get(controlName);
+  //       if (control && control.dirty) {
+  //         callback(controlName, control.value);
+  //       }
+  //     }
+  //   }
+  // }
+
+  // private getEditedFormValues() {
+  //   const editedValues: { [key: string]: any } = {};
+  //   this.processFormValues((controlName, value) => {
+  //     editedValues[controlName] = value;
+  //   });
+  //   return editedValues;
+  // }
+
+  // private updateLocalDriver() {
+  //   this.processFormValues((controlName, value) => {
+  //     (this.driver as any)[controlName] = value;
+  //   });
+  // }
 
 }

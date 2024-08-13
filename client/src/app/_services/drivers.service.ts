@@ -27,9 +27,7 @@ export class DriversService {
     return this.http.get<Driver>(this.baseUrl + 'drivers/' + cnp);
   }
 
-  addNew(newDriver: Driver): Observable<Driver | null> {
-    this.drivers.update(drivers => [...drivers, newDriver]);
-
+  addNew(newDriver: Driver): Observable<Driver> {
     return this.http.post<Driver>(this.baseUrl + 'drivers/add-new-driver', newDriver);
   }
 

@@ -1,10 +1,12 @@
-import { Component, OnInit, inject, output } from '@angular/core';
+import { Component, HostListener, OnInit, inject, output } from '@angular/core';
 import { DriversService } from '../../_services/drivers.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Driver } from '../../_models/driver';
-import { DriverContractStatuses, getEnumValues } from '../../_models/driverContractStatuses';
-import { CommonModule, DatePipe } from '@angular/common';
+import { DriverContractStatuses } from '../../_models/driverContractStatuses';
+import { CommonModule } from '@angular/common';
+import { UtilityService } from '../../_services/utility.service';
+import { CanComponentDeactivate } from '../../_guards/prevent-unsaved-changes.guard';
 
 @Component({
   selector: 'app-add-new-driver',
@@ -13,15 +15,22 @@ import { CommonModule, DatePipe } from '@angular/common';
   templateUrl: './add-new-driver.component.html',
   styleUrl: './add-new-driver.component.css'
 })
-export class AddNewDriverComponent implements OnInit {
+export class AddNewDriverComponent implements OnInit, CanComponentDeactivate {
   private driversService = inject(DriversService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  private datePipe = inject(DatePipe);
+  utility = inject(UtilityService);
   addDriverForm!: FormGroup;
   cancelAddDriver = output<boolean>();
   newDriver!: Driver;
-  driverContracStatuses = getEnumValues(DriverContractStatuses);
+  driverContracStatuses = this.utility.getEnumValues(DriverContractStatuses);
+
+  //this is a guard for the browser, for unsaved changes;
+  @HostListener('window:beforeunload', ['$event']) notify($event: any) {
+    if (this.addDriverForm?.dirty) {
+      $event.returnValue = true;
+    }
+  }
 
   ngOnInit(): void {
     this.addDriverForm = this.fb.group({
@@ -31,14 +40,21 @@ export class AddNewDriverComponent implements OnInit {
       Validators.maxLength(13),
       Validators.pattern('^[0-9]*$')]],
       telNumber: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      employer: [''],
       address: [''],
+      idNumber: [''],
+      idNumberExpirationDate: [''],
       driverLicenceNumber: [''],
       driverLicenceExpirationDate: [''],
-      drivingCertificateNumber: [''],
-      drivingCertificateExpirationDate: [''],
       contractNumber: [''],
       contractStatus: [''],
+      details: [''],
+      actionsLog: ['']
     })
+  }
+
+  canDeactivate(){
+    return this.addDriverForm.dirty;
   }
 
   addNewDriver() {
@@ -46,9 +62,9 @@ export class AddNewDriverComponent implements OnInit {
 
     const processedValues = {
       ...formValues,
-      driverLicenceExpirationDate: formValues.driverLicenceExpirationDate || this.datePipe.transform(Date.now(), 'yyyy-MM-dd'),
-      drivingCertificateExpirationDate: formValues.drivingCertificateExpirationDate || this.datePipe.transform(Date.now(), 'yyyy-MM-dd'),
-      contractStatus: formValues.contractStatus || DriverContractStatuses.Active
+      driverLicenceExpirationDate: formValues.driverLicenceExpirationDate || null,
+      idNumberExpirationDate: formValues.idNumberExpirationDate || null,
+      contractStatus: formValues.contractStatus || null,
     }
 
     this.driversService.addNew(processedValues).subscribe({
@@ -56,6 +72,7 @@ export class AddNewDriverComponent implements OnInit {
         if (response == null) {
           return;
         }
+        this.addDriverForm.reset();
         this.router.navigateByUrl("drivers");
       },
     });

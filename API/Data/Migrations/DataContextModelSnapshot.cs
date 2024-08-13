@@ -45,7 +45,7 @@ namespace API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("API.Entities.Driver", b =>
@@ -53,10 +53,6 @@ namespace API.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("ActionsLog")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Address")
                         .HasColumnType("TEXT");
@@ -68,7 +64,7 @@ namespace API.Data.Migrations
                     b.Property<string>("ContractNumber")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ContractStatus")
+                    b.Property<int?>("ContractStatus")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreationDate")
@@ -77,33 +73,147 @@ namespace API.Data.Migrations
                     b.Property<DateOnly>("DateOfBirt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("DriverLicenceExpirationDate")
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("DriverLicenceExpirationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DriverLicenceNumber")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("DrivingCertificateExpirationDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DrivingCertificateNumber")
+                    b.Property<string>("Employer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("IdNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("IdNumberExpirationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("JobId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Log")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TelNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("TruckId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Drivers", (string)null);
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("TruckId");
+
+                    b.ToTable("Drivers");
+                });
+
+            modelBuilder.Entity("API.Entities.Expense", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Client")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Detail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool?>("Paid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Supplier")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TruckId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("TruckId");
+
+                    b.ToTable("Expenses");
+                });
+
+            modelBuilder.Entity("API.Entities.Job", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Client")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Destination")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Income")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("KM")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Log")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Profit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StartPoint")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TransportedGoods")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TransportingFirm")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Job");
                 });
 
             modelBuilder.Entity("API.Entities.Truck", b =>
@@ -112,60 +222,150 @@ namespace API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AssignedDriverId")
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("EngineCapacity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("EngineCapacity")
+                    b.Property<DateOnly?>("FabricationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FuelType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("GermanVignetteExpirationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("HorsePower")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("FabricationDate")
+                    b.Property<DateOnly?>("ITPExpirationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("GermanVignetteExpirationDate")
+                    b.Property<DateOnly?>("InsurranceExpirationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("HorsePower")
+                    b.Property<int?>("JobId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ITPExpirationDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("InsurranceExpirationDate")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("KmOnBoard")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LicenceNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Log")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Manufacturer")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Model")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("RoVignetteExpirationDate")
+                    b.Property<DateOnly?>("NextRevisionDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
+                    b.Property<string>("Owner")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("RoVignetteExpirationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Status")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("VIN")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedDriverId");
+                    b.HasIndex("JobId");
 
-                    b.ToTable("Trucks", (string)null);
+                    b.ToTable("Trucks");
+                });
+
+            modelBuilder.Entity("API.Entities.Driver", b =>
+                {
+                    b.HasOne("API.Entities.Job", "Job")
+                        .WithMany("Drivers")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("API.Entities.Truck", "Truck")
+                        .WithMany("Drivers")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Truck");
+                });
+
+            modelBuilder.Entity("API.Entities.Expense", b =>
+                {
+                    b.HasOne("API.Entities.Driver", "Driver")
+                        .WithMany("Expenses")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.Job", "Job")
+                        .WithMany("Expenses")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.Truck", "Truck")
+                        .WithMany("Expenses")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Truck");
                 });
 
             modelBuilder.Entity("API.Entities.Truck", b =>
                 {
-                    b.HasOne("API.Entities.Driver", "AssignedDriver")
-                        .WithMany()
-                        .HasForeignKey("AssignedDriverId");
+                    b.HasOne("API.Entities.Job", "Job")
+                        .WithMany("Trucks")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("AssignedDriver");
+                    b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("API.Entities.Driver", b =>
+                {
+                    b.Navigation("Expenses");
+                });
+
+            modelBuilder.Entity("API.Entities.Job", b =>
+                {
+                    b.Navigation("Drivers");
+
+                    b.Navigation("Expenses");
+
+                    b.Navigation("Trucks");
+                });
+
+            modelBuilder.Entity("API.Entities.Truck", b =>
+                {
+                    b.Navigation("Drivers");
+
+                    b.Navigation("Expenses");
                 });
 #pragma warning restore 612, 618
         }

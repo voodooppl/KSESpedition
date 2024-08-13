@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationService(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
         services.AddControllers();
         services.AddDbContext<DataContext>(opt =>
         {
@@ -17,6 +19,8 @@ public static class ApplicationServiceExtensions
         services.AddCors();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IDriversRepository, DriverRepository>();
+        services.AddScoped<ITruckRepository, TruckRepository>();
+        services.AddScoped<ValuesUpdateVerifier>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         return services;

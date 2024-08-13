@@ -1,0 +1,23 @@
+input{
+    margin-left: 4px;
+}
+
+.col-2 {
+    display: flex;
+    flex-direction: column; /* Arrange buttons in a column */
+    height: 100%; /* Ensure the column takes up the full height of its container */
+  }
+  
+  .col-2 button {
+    flex: 1; /* Make buttons grow to take up available space */
+    width: 100%; /* Ensure buttons take up the full width of the container */
+    margin-bottom: 10px; /* Add some space between buttons, if desired */
+  }
+  
+  .col-2 button:last-child {
+    margin-bottom: 0; /* Remove margin from the last button */
+  }
+  
+  .flex-item {
+    flex: 1;
+  }

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountController(DataContext dataContext, ITokenService tokenService, IHttpContextAccessor httpContextAccessor) : BaseApiController(httpContextAccessor)
+public class AccountController(DataContext dataContext, ITokenService tokenService) : BaseApiController()
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -31,6 +31,7 @@ public class AccountController(DataContext dataContext, ITokenService tokenServi
         {
             FirstName = registerDto.FirstName,
             Token = tokenService.CreateToken(user),
+            Email = registerDto.Email,
         };
     }
 
@@ -52,6 +53,7 @@ public class AccountController(DataContext dataContext, ITokenService tokenServi
         {
             FirstName = user.FirstName,
             Token = tokenService.CreateToken(user),
+            Email = user.Email
         };
     }
 

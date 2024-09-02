@@ -3,7 +3,7 @@ using API.Enums;
 
 namespace API.DTOs;
 
-public class UpdateDriverDto
+public class DriverDto
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
@@ -11,14 +11,15 @@ public class UpdateDriverDto
     public required string TelNumber { get; set; }
     public string? Employer { get; set; }
     public string? Address { get; set; }
+    // public DateOnly? DateOfBirth { get; set; }
     public string? IdNumber { get; set; }
     public DateOnly? IdNumberExpirationDate { get; set; }
     public string? DriverLicenceNumber { get; set; }
-    public DateOnly DriverLicenceExpirationDate { get; set; }
+    public DateOnly? DriverLicenceExpirationDate { get; set; }
     public string? ContractNumber { get; set; }
-    public DriverContractStatuses ContractStatus { get; set; }
+    public DriverContractStatuses? ContractStatus { get; set; }
     public List<Expense>? Expenses { get; set; } 
-    // public List<string>? Log { get; set; } 
+    public List<string>? Log { get; set; } 
     public string? Details { get; set; }
     //Navigation properties
     public int? TruckId { get; set; }

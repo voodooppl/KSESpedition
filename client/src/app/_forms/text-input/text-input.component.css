@@ -1,0 +1,27 @@
+Flexbox styling to position input and button on the same row
+.btn-eye {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.btn-eye i {
+    font-size: 18px; 
+    color: #466179; 
+}
+
+.form-floating label{
+    color: #466179;
+}
+
+.form-floating label::before, 
+.form-floating label::after {
+    background-color: transparent;
+}
+
+input:disabled{
+    background-color:aliceblue;
+    border: none;
+}

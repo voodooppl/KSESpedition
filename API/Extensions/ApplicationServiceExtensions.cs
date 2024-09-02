@@ -12,6 +12,7 @@ public static class ApplicationServiceExtensions
     {
         services.AddHttpContextAccessor();
         services.AddControllers();
+        
         services.AddDbContext<DataContext>(opt =>
         {
             opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));

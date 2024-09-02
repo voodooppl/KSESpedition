@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using API.DTOs;
+﻿using API.DTOs;
 using API.Entities;
-using API.Enums;
+using API.Extensions;
 using API.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class DriversController(IDriversRepository driversRepository, IMapper mapper, ValuesUpdateVerifier valuesUpdateVerifier, IHttpContextAccessor httpContextAccessor) : BaseApiController(httpContextAccessor)
+public class DriversController(IDriversRepository driversRepository, IMapper mapper, ValuesUpdateVerifier valuesUpdateVerifier) : BaseApiController()
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Driver>>> GetDriversAsync()
+    public async Task<ActionResult<IEnumerable<Driver>>> GetDriversAsync([FromQuery] DriverParams driverParams)
     {
-        var drivers = await driversRepository.GetDriversAsync();
+        var drivers = await driversRepository.GetDriversAsync(driverParams);
+        Response.AddPaginationHeader(drivers);
 
         return Ok(drivers);
     }
@@ -26,45 +26,47 @@ public class DriversController(IDriversRepository driversRepository, IMapper map
         var driver = await driversRepository.GetDriverByCNPAsync(cnp);
         if (driver == null) return NotFound();
 
-        return Ok(driver);
+        return driver;
     }
 
     [HttpPost("add-new-driver")]
-    public async Task<ActionResult<Driver>> AddDriverAsync(Driver driver)
+    public async Task<ActionResult<Driver>> AddDriverAsync(DriverDto driver)
     {
         if (driver == null) return BadRequest("Please add a valid driver.");
 
         if (await driversRepository.GetDriverByCNPAsync(driver.CNP) != null) return BadRequest("Driver already exists.");
 
-        if (driver != null)
+        var newDriver = new Driver
         {
-            driver.DateOfBirt = driver.GetDateOfBirth(driver);
+            FirstName = driver.FirstName,
+            LastName = driver.LastName,
+            CNP = driver.CNP,
+            TelNumber = driver.TelNumber,
+            DateOfBirt = Driver.GetDateOfBirth(driver.CNP)
+        };
 
-            if(!driver.IdNumberExpirationDate.HasValue) driver.IdNumberExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if(!driver.DriverLicenceExpirationDate.HasValue) driver.DriverLicenceExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if(!driver.ContractStatus.HasValue) driver.ContractStatus = DriverContractStatuses.Active;
+        mapper.Map(driver, newDriver);
 
-            var loggedInUserEmail = GetLoggedUserEmail();
-            driver.Log?.Add($"{DateTime.UtcNow} - Userul {loggedInUserEmail} a adaugat soferul {driver.FirstName + " " + driver.LastName}.");
+        var loggedInUserEmail = User.GetLoggedUserEmail();
+        newDriver.Log?.Add($"{DateTime.UtcNow} - Userul {loggedInUserEmail} a adaugat soferul {driver.FirstName + " " + driver.LastName}.");
 
-            if (!await driversRepository.AddDriverAsync(driver))
-            {
-                throw new Exception("Unable to add driver.");
-            }
+        if (!await driversRepository.AddDriverAsync(newDriver))
+        {
+            throw new Exception("Unable to add driver.");
         }
 
-        return Ok(driver);
+        return Ok(newDriver);
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateDriver(UpdateDriverDto updateDriverDto)
+    public async Task<ActionResult<Driver>> UpdateDriver(DriverDto driver)
     {
-        var selectedDriver = await driversRepository.GetDriverByCNPAsync(updateDriverDto.CNP);
+        var existingDriver = await driversRepository.GetDriverByCNPAsync(driver.CNP);
 
-        if (selectedDriver == null) return NotFound("Acest sofer nu a putut fi gasit.");
+        if (existingDriver == null) return NotFound("Driver not found.");
 
-        var loggedInUserEmail = GetLoggedUserEmail();
-        var updatedValues = valuesUpdateVerifier.GetModifiedProperties(updateDriverDto, selectedDriver);
+        var loggedInUserEmail = User.GetLoggedUserEmail();
+        var updatedValues = valuesUpdateVerifier.GetModifiedProperties(driver, existingDriver);
 
         if (updatedValues.Any())
         {
@@ -74,14 +76,14 @@ public class DriversController(IDriversRepository driversRepository, IMapper map
                 var oldValue = value.Value.OldValue;
                 var newValue = value.Value.NewValue;
 
-                selectedDriver.Log?.Add(@$"{DateTime.UtcNow}: Userul {loggedInUserEmail} 
-                a modificat {propertyName} din {oldValue} in {newValue}");
+                driver.Log?.Add(@$"{DateTime.UtcNow}: Userul {loggedInUserEmail} 
+                    a modificat {propertyName} din ""{oldValue}"" in ""{newValue}""");
             };
         }
 
-        mapper.Map(updateDriverDto, selectedDriver);
+        mapper.Map(driver, existingDriver);
 
-        if (await driversRepository.SaveAllAsync()) return NoContent();
+        if (await driversRepository.SaveAllAsync()) return existingDriver;
 
         return BadRequest("Nu s-a putut finaliza salvarea.");
     }

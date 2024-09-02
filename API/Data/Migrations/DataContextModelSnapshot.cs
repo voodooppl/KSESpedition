@@ -234,8 +234,8 @@ namespace API.Data.Migrations
                     b.Property<DateOnly?>("FabricationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FuelType")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("FuelType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateOnly?>("GermanVignetteExpirationDate")
                         .HasColumnType("TEXT");

@@ -1,0 +1,8 @@
+<div [ngClass]="isEditable() ? 'form-component-select-disabled' : 'form-component-select'">
+    <label>{{label()}}</label>
+    <select [formControl]="control" class="form-control" [ngClass]="utility.getStatusClass(control.value)">
+        <option *ngFor="let status of enumValues()" [value]="status.key" [ngClass]="utility.getStatusClass(status.key)">
+            {{status.key}}
+        </option>
+    </select>
+</div>

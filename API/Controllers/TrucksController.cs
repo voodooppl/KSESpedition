@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Enums;
+using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class TrucksController(ITruckRepository truckRepository, IMapper mapper, ValuesUpdateVerifier valuesUpdateVerifier, IHttpContextAccessor httpContextAccessor) : BaseApiController(httpContextAccessor)
+public class TrucksController(ITruckRepository truckRepository, IMapper mapper, ValuesUpdateVerifier valuesUpdateVerifier) : BaseApiController()
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Truck>>> GetTrucksAsync()
@@ -56,7 +57,7 @@ public class TrucksController(ITruckRepository truckRepository, IMapper mapper, 
             if (!truck.GermanVignetteExpirationDate.HasValue) truck.GermanVignetteExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
             if (!truck.Status.HasValue) truck.Status = TruckStatuses.Active;
 
-            var loggedInUserEmail = GetLoggedUserEmail();
+            var loggedInUserEmail = User.GetLoggedUserEmail();
             truck.Log?.Add(@$"{DateTime.UtcNow} - Userul {loggedInUserEmail} a adaugat camionul 
                 {truck.Manufacturer + ' ' + truck.Model} cu VIN {truck.VIN} si nr. inmatriculare {truck.LicenceNumber}.");
 
@@ -73,7 +74,7 @@ public class TrucksController(ITruckRepository truckRepository, IMapper mapper, 
         var existingTruck = await truckRepository.GetTruckByIdAsync(updateTruckDto.Id);
         if (existingTruck == null) return NotFound("The truck could not be found.");
 
-        var loggedInUserEmail = GetLoggedUserEmail();
+        var loggedInUserEmail = User.GetLoggedUserEmail();
         var updatedValues = valuesUpdateVerifier.GetModifiedProperties(updateTruckDto, existingTruck);
 
         if (updatedValues.Any())

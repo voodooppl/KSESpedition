@@ -1,46 +1,17 @@
 <form [formGroup]="userRegisterForm" (ngSubmit)="register()">
     <h2 class="text-center text-primary">Create account</h2>
     <hr>
-    <div class="mb-3 form-floating">
-        <input type="text" class="form-control" formControlName="firstName" placeholder="First Name">
-        <div *ngIf="userRegisterForm.controls['firstName'].invalid && 
-            (userRegisterForm.controls['firstName'].dirty || userRegisterForm.controls['firstName'].touched)">
-            <small *ngIf="userRegisterForm.controls['firstName'].errors?.['required']" class="text-danger">First name is required.</small>
-            <small *ngIf="userRegisterForm.controls['firstName'].errors?.['minlength']" class="text-danger">First name must be at least 3 characters long.</small>
-        </div>
-        <label>First Name</label>
-    </div>
-    <div class="mb-3 form-floating">
-        <input type="text" class="form-control" formControlName="lastName" placeholder="Last Name">
-        <div *ngIf="userRegisterForm.controls['lastName'].invalid && 
-        (userRegisterForm.controls['lastName'].dirty || userRegisterForm.controls['lastName'].touched)">
-        <small *ngIf="userRegisterForm.controls['lastName'].errors?.['required']" class="text-danger">Last name is required.</small>
-        <small *ngIf="userRegisterForm.controls['lastName'].errors?.['minlength']" class="text-danger">Last name must be at least 3 characters long.</small>
-    </div>
-        <label>Last Name</label>
-    </div>
-    <div class="mb-3 form-floating">
-        <input type="email" class="form-control" formControlName="email" placeholder="Email">
-        <div *ngIf="userRegisterForm.controls['email'].invalid &&
-         (userRegisterForm.controls['email'].dirty || userRegisterForm.controls['email'].touched)">
-            <small *ngIf="userRegisterForm.controls['email'].errors?.['required']" class="text-danger">Email is
-                required.</small>
-            <small *ngIf="userRegisterForm.controls['email'].errors?.['email']" class="text-danger">Must be a valid
-                email.</small>
-        </div>
-        <label>Email</label>
-    </div>
-    <div class="mb-3 form-floating">
-        <input type="password" class="form-control" formControlName="password" placeholder="Password">
-        <div *ngIf="userRegisterForm.controls['password'].invalid && (
-            userRegisterForm.controls['password'].dirty || userRegisterForm.controls['password'].touched)">
-            <small *ngIf="userRegisterForm.controls['password'].errors?.['required']" class="text-danger">Password is
-                required.</small>
-            <small *ngIf="userRegisterForm.controls['password'].errors?.['minlength']" class="text-danger">Password must
-                be at least 8 characters long.</small>
-        </div>
-        <label>Password</label>
-    </div>
+
+    <app-text-input [label]="'First Name'" [formControl]="$any(userRegisterForm.controls['firstName'])"></app-text-input>
+    <app-text-input [label]="'Last Name'" [formControl]="$any(userRegisterForm.controls['lastName'])"></app-text-input>
+
+    <app-text-input [label]="'Email'" [formControl]="$any(userRegisterForm.controls['email'])" [type]="'email'"></app-text-input>
+
+    <app-text-input [label]="'Password'" [formControl]="$any(userRegisterForm.controls['password'])" 
+        [isPasswordField]="true"></app-text-input>
+    <app-text-input [label]="'Confirm password'" [formControl]="$any(userRegisterForm.controls['confirmPassword'])" 
+        [isPasswordField]="true"></app-text-input>
+
     <hr>
     <div class="form-group text-center">
         <button [disabled]="userRegisterForm.invalid || userRegisterForm.pristine" class="btn btn-success me-2" type="submit">Register</button>

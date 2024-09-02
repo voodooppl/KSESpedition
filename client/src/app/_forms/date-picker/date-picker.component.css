@@ -1,0 +1,13 @@
+.form-floating label{
+    color: #466179;
+}
+
+.form-floating label::before, 
+.form-floating label::after {
+    background-color: transparent;
+}
+
+input:disabled{
+    background-color:aliceblue;
+    border: none;
+}

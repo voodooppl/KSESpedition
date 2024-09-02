@@ -1,0 +1,8 @@
+.textarea-input-component label{
+    color: #466179;
+}
+
+textarea:disabled{
+    background-color:aliceblue;
+    border: none;
+}

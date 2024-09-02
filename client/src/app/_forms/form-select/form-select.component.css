@@ -1,0 +1,23 @@
+select:disabled{
+    background-color: aliceblue;
+    border: none;
+}
+.form-component-select{
+    background-color: aliceblue;
+    border-radius: 10px;
+}
+.form-component-select-disabled{
+    background-color: white;
+}
+
+select{
+    height: 33px;
+    padding: 0 10px;
+}
+
+label {
+    padding-left: 10px;
+    color: #466179;
+    font-size: 13.5px;
+    padding-bottom: 0;
+}

@@ -1,6 +1,5 @@
 using API.DTOs;
 using API.Entities;
-using API.Enums;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
@@ -14,9 +13,10 @@ namespace API.Controllers;
 public class TrucksController(ITruckRepository truckRepository, IMapper mapper, ValuesUpdateVerifier valuesUpdateVerifier) : BaseApiController()
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Truck>>> GetTrucksAsync()
+    public async Task<ActionResult<IEnumerable<Truck>>> GetTrucksAsync([FromQuery] TruckParams truckParams)
     {
-        var trucks = await truckRepository.GetTrucksAsync();
+        var trucks = await truckRepository.GetTrucksAsync(truckParams);
+        Response.AddPaginationHeader(trucks);
 
         return Ok(trucks);
     }
@@ -42,40 +42,44 @@ public class TrucksController(ITruckRepository truckRepository, IMapper mapper, 
     }
 
     [HttpPost("add-new-truck")]
-    public async Task<ActionResult<Truck>> AddTruck(Truck truck)
+    public async Task<ActionResult<Truck>> AddTruck(TruckDto truck)
     {
         if (truck == null) return BadRequest("Invalid truck");
 
         if (await truckRepository.GetTruckByLicenceNumberAsync(truck.LicenceNumber) != null) return BadRequest("Truck already exists.");
 
-        if (truck != null)
+        var newTruck = new Truck
         {
-            if (!truck.FabricationDate.HasValue) truck.FabricationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (!truck.InsurranceExpirationDate.HasValue) truck.InsurranceExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (!truck.ITPExpirationDate.HasValue) truck.ITPExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (!truck.RoVignetteExpirationDate.HasValue) truck.RoVignetteExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (!truck.GermanVignetteExpirationDate.HasValue) truck.GermanVignetteExpirationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (!truck.Status.HasValue) truck.Status = TruckStatuses.Active;
+            LicenceNumber = truck.LicenceNumber,
+            VIN = truck.VIN,
+            Manufacturer = truck.Manufacturer,
+            Model = truck.Model,
+        };
 
-            var loggedInUserEmail = User.GetLoggedUserEmail();
-            truck.Log?.Add(@$"{DateTime.UtcNow} - Userul {loggedInUserEmail} a adaugat camionul 
+        mapper.Map(truck, newTruck);
+
+        var loggedInUserEmail = User.GetLoggedUserEmail();
+        newTruck.Log?.Add(@$"{DateTime.UtcNow} - Userul {loggedInUserEmail} a adaugat camionul 
                 {truck.Manufacturer + ' ' + truck.Model} cu VIN {truck.VIN} si nr. inmatriculare {truck.LicenceNumber}.");
 
-            await truckRepository.AddTruckAsync(truck);
-            await truckRepository.SaveChangesAsync();
+        if (!await truckRepository.AddTruckAsync(newTruck))
+        {
+            throw new Exception("Unable to add truck.");
         }
 
-        return Ok(truck);
+        return Ok(newTruck);
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateTruck(UpdateTruckDto updateTruckDto)
+    public async Task<ActionResult<Truck>> UpdateTruck(TruckDto truck)
     {
-        var existingTruck = await truckRepository.GetTruckByIdAsync(updateTruckDto.Id);
+        var existingTruck = await truckRepository.GetTruckByIdAsync(truck.Id);
         if (existingTruck == null) return NotFound("The truck could not be found.");
 
         var loggedInUserEmail = User.GetLoggedUserEmail();
-        var updatedValues = valuesUpdateVerifier.GetModifiedProperties(updateTruckDto, existingTruck);
+        var updatedValues = valuesUpdateVerifier.GetModifiedProperties(truck, existingTruck);
+
+        mapper.Map(truck, existingTruck);
 
         if (updatedValues.Any())
         {
@@ -85,16 +89,25 @@ public class TrucksController(ITruckRepository truckRepository, IMapper mapper, 
                 var oldValue = value.Value.OldValue;
                 var newValue = value.Value.NewValue;
 
-                updateTruckDto.Log?.Add(@$"{DateTime.UtcNow}: Userul {loggedInUserEmail} 
-                a modificat {propertyName} din {oldValue} in {newValue}");
+                if (propertyName == "Status")
+                {
+                    newValue = existingTruck.Status;
+                }
+
+                if (propertyName == "FuelType")
+                {
+                    newValue = existingTruck.FuelType;
+                }
+
+                existingTruck.Log?.Add(@$"{DateTime.UtcNow}: Userul {loggedInUserEmail} 
+                a modificat {propertyName} din ""{oldValue}"" in ""{newValue}""");
             };
         }
 
-        mapper.Map(updateTruckDto, existingTruck);
 
-        if (await truckRepository.SaveChangesAsync()) return NoContent();
+        if (await truckRepository.SaveChangesAsync()) return existingTruck;
 
-        return BadRequest("Nu s-a putut finaliza salvarea.");
+        return BadRequest("Could not save truck.");
     }
 
     [HttpDelete("{licenceNumber}")]

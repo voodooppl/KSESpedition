@@ -46,16 +46,13 @@ export class AddNewDriverComponent implements OnInit, CanComponentDeactivate {
       telNumber: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       employer: [''],
       address: [''],
-      // dateofBirth: [''],
       idNumber: [''],
       idNumberExpirationDate: [''],
       driverLicenceNumber: [''],
       driverLicenceExpirationDate: [''],
       contractNumber: [''],
-      contractStatus: [''],
+      contractStatus: ['0'],
       details: [''],
-      // actionsLog: [''],
-      // log: [''],
     })
   }
 
@@ -70,7 +67,7 @@ export class AddNewDriverComponent implements OnInit, CanComponentDeactivate {
       ...formValues,
       driverLicenceExpirationDate: formValues.driverLicenceExpirationDate || null,
       idNumberExpirationDate: formValues.idNumberExpirationDate || null,
-      contractStatus: formValues.contractStatus || null,
+      // contractStatus: formValues.contractStatus || null,
     }
 
     this.driversService.addNew(processedValues).subscribe({

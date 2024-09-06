@@ -15,6 +15,7 @@ export class DatePickerComponent implements ControlValueAccessor, OnChanges, OnI
   utility = inject(UtilityService);
   label = input.required<string>();
   isEditable = input<boolean>(true);
+  isCheckDate = input<boolean>(true);
   bsConfig?: Partial<BsDatepickerConfig>;
   constructor(@Self() public ngControl: NgControl) {
     ngControl.valueAccessor = this;

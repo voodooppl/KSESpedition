@@ -7,22 +7,22 @@
             <form [formGroup]="addDriverForm" (ngSubmit)="addNewDriver()">
                 <div class="d-flex justify-content-between">
                     <div class="flex-grow me-1">
-                        <app-text-input [label]="'First Name'"
+                        <app-text-input [label]="'First Name*'"
                             [formControl]="$any(addDriverForm.controls['firstName'])"></app-text-input>
                     </div>
                     <div class="flex-grow ms-1">
-                        <app-text-input [label]="'Last Name'"
+                        <app-text-input [label]="'Last Name*'"
                             [formControl]="$any(addDriverForm.controls['lastName'])"></app-text-input>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between">
                     <div class="flex-grow me-1">
-                        <app-text-input [label]="'CNP'" [textMessage]="'numbers'"
+                        <app-text-input [label]="'CNP*'" [textMessage]="'numbers'"
                             [formControl]="$any(addDriverForm.controls['cnp'])"></app-text-input>
                     </div>
                     <div class="flex-grow ms-1">
-                        <app-text-input [label]="'Tel Number'" [textMessage]="'numbers'"
+                        <app-text-input [label]="'Tel Number*'" [textMessage]="'numbers'"
                             [formControl]="$any(addDriverForm.controls['telNumber'])"></app-text-input>
                     </div>
                 </div>

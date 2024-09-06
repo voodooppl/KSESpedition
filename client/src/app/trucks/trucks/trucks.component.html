@@ -1,10 +1,54 @@
-@if(trucksService.trucks()){
+@if(paginationServices.paginatedResult()?.items){
 <div class="mx-auto">
-    <h1 class="text-primary text-center">All Trucks</h1>
+    <h1 class="text-primary text-center">All Trucks - {{paginationServices.paginatedResult()?.pagination?.totalItems}}
+    </h1>
+</div>
+
+<div class="row mt-3">
+
+    <div class="col-1">
+        <label class="me-2 pt-2">Filter by</label>
+    </div>
+    <div class="col-2 d-flex">
+        <label class="me-2 pt-2">Status</label>
+        <select name="truckStatus" [(ngModel)]="trucksService.truckParams().truckStatuses" class="form-control"
+            (ngModelChange)="getTrucks()">
+            @for (status of truckStatuses; track status.value) {
+            <option [value]="status.value">{{status.key}}</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-2 d-flex">
+        <label class="me-2 pt-2">Fuel</label>
+        <select name="fuelTypes" [(ngModel)]="trucksService.truckParams().fuelTypes" class="form-control"
+            (ngModelChange)="getTrucks()">
+            @for (status of fuelTypes; track status.value) {
+            <option [value]="status.value">{{status.key}}</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-1 pt-2">
+        <label class="me-2">Order by</label>
+    </div>
+
+    <div class="col-2">
+        <select name="orderBy" [(ngModel)]="trucksService.truckParams().orderBy" class="form-control"
+            (ngModelChange)="getTrucks()">
+            @for (status of orderCategories; track status.value) {
+            <option [value]="status.value">{{status.display}}</option>
+            }
+        </select>
+    </div>
+    <div class="col-2">
+        <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset filters</button>
+    </div>
+
 </div>
 
 <div class="row">
-    <ng-container *ngFor="let truck of trucksService.trucks()">
+    <ng-container *ngFor="let truck of paginationServices.paginatedResult()?.items">
         <div class="col-3">
             <app-truck-card [truck]="truck"></app-truck-card>
         </div>
@@ -12,8 +56,19 @@
 </div>
 
 }@else{
-<p>No drivers found.</p>
+<p>No trucks found.</p>
 }
+
+@if (paginationServices.paginatedResult()?.pagination) {
+<div class="d-flex justify-content-center mt-5">
+    <pagination [boundaryLinks]="true" [totalItems]="paginationServices.paginatedResult()?.pagination!.totalItems"
+        [itemsPerPage]="paginationServices.paginatedResult()?.pagination!.itemsPerPage"
+        [(ngModel)]="paginationServices.paginatedResult()?.pagination!.currentPage" (pageChanged)="pageChanged($event)"
+        [maxSize]="10" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+</div>
+}
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-auto">

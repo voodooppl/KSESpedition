@@ -1,5 +1,6 @@
 ﻿using API.DTOs;
 using API.Entities;
+using API.Enums;
 using API.Extensions;
 using API.Helpers;
 using AutoMapper;
@@ -68,6 +69,8 @@ public class DriversController(IDriversRepository driversRepository, IMapper map
         var loggedInUserEmail = User.GetLoggedUserEmail();
         var updatedValues = valuesUpdateVerifier.GetModifiedProperties(driver, existingDriver);
 
+        mapper.Map(driver, existingDriver);
+
         if (updatedValues.Any())
         {
             foreach (var value in updatedValues)
@@ -76,16 +79,18 @@ public class DriversController(IDriversRepository driversRepository, IMapper map
                 var oldValue = value.Value.OldValue;
                 var newValue = value.Value.NewValue;
 
-                driver.Log?.Add(@$"{DateTime.UtcNow}: Userul {loggedInUserEmail} 
+                if(propertyName == "ContractStatus"){
+                    newValue = existingDriver.ContractStatus;
+                }
+
+                existingDriver.Log?.Add(@$"{DateTime.UtcNow}: Userul {loggedInUserEmail} 
                     a modificat {propertyName} din ""{oldValue}"" in ""{newValue}""");
             };
         }
 
-        mapper.Map(driver, existingDriver);
-
         if (await driversRepository.SaveAllAsync()) return existingDriver;
 
-        return BadRequest("Nu s-a putut finaliza salvarea.");
+        return BadRequest("Could not save driver.");
     }
 
     [HttpDelete("driver-details/{cnp}")]

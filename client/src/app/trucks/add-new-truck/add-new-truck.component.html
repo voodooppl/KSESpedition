@@ -8,89 +8,49 @@
 
                 <div class="row g-0 mb-3">
                     <div class="col-6 pe-1">
-                        <div class="form-floating">
-                            <input class="form-control" type="text" formControlName="licenceNumber"
-                                placeholder="LicenceNumber">
-                            <div *ngIf="addTruckForm.controls['licenceNumber'].invalid && (
-                                addTruckForm.controls['licenceNumber'].dirty || addTruckForm.controls['licenceNumber'].touched
-                            )">
-                                <small class="text-danger">Licence number is required.</small>
-                            </div>
-                            <label>LicenceNumber<span style="color: red;">*</span></label>
-                        </div>
+                        <app-text-input [label]="'Licence Number*'"
+                            [formControl]="$any(addTruckForm.controls['licenceNumber'])"></app-text-input>
                     </div>
                     <div class="col-6 ps-1">
-                        <div class="form-floating">
-                            <input class="form-control" type="text" formControlName="vin" placeholder="VIN">
-                            <div *ngIf="addTruckForm.controls['vin'].invalid && (
-                                addTruckForm.controls['vin'].dirty || addTruckForm.controls['vin'].touched
-                            )">
-                                <small class="text-danger">VIN is required.</small>
-                            </div>
-                            <label>VIN<span style="color: red;">*</span></label>
-                        </div>
+                        <app-text-input [label]="'VIN*'"
+                            [formControl]="$any(addTruckForm.controls['vin'])"></app-text-input>
                     </div>
                 </div>
 
                 <div class="row g-0 mb-3">
                     <div class="col-6 pe-1">
-                        <div class="form-floating">
-                            <input class="form-control" type="text" formControlName="manufacturer"
-                                placeholder="Manufacturer">
-                            <div *ngIf="addTruckForm.controls['manufacturer'].invalid && (
-                                    addTruckForm.controls['manufacturer'].dirty || addTruckForm.controls['manufacturer'].touched
-                                )">
-                                <small class="text-danger">Manufacturer is required.</small>
-                            </div>
-                            <label>Manufacturer<span style="color: red;">*</span></label>
-                        </div>
+                        <app-text-input [label]="'Manufacturer*'"
+                            [formControl]="$any(addTruckForm.controls['manufacturer'])"></app-text-input>
                     </div>
                     <div class="col-6 ps-1">
-                        <div class="form-floating">
-                            <input class="form-control" type="text" formControlName="model" placeholder="Model">
-                            <div *ngIf="addTruckForm.controls['model'].invalid && (
-                                addTruckForm.controls['model'].dirty || addTruckForm.controls['model'].touched
-                            )">
-                                <small class="text-danger">Model is required.</small>
-                            </div>
-                            <label>Model<span style="color: red;">*</span></label>
-                        </div>
+                        <app-text-input [label]="'Model*'"
+                            [formControl]="$any(addTruckForm.controls['model'])"></app-text-input>
                     </div>
                 </div>
+
                 <div class="row justify-content-center mb-3">
                     <div class="col-4">
-                        <div class="form-floating">
-                            <input class="form-control" type="number" formControlName="kmOnBoard"
-                                placeholder="KM on Board">
-                            <label>KM on Board</label>
-                        </div>
+                        <app-text-input [label]="'Km On Board'" [type]="'number'"
+                            [formControl]="$any(addTruckForm.controls['kmOnBoard'])"></app-text-input>
                     </div>
+
                     <div class="col-4">
-                        <div class="form-floating">
-                            <div class="row">
-                                <label>Fuel Type<span style="color: red;">*</span></label>
-                                <select formControlName="fuelType" class="form-control-sm">
-                                    <option *ngFor="let status of fuelTypes" [ngValue]="status.value">
-                                        {{status.key}}
-                                    </option>
-                                </select>
-                                <div
-                                    *ngIf="addTruckForm.controls['fuelType'].invalid && (
-                                    addTruckForm.controls['fuelType'].dirty || addTruckForm.controls['fuelType'].touched)">
-                                <small class="text-danger" *ngIf="addTruckForm.controls['fuelType'].errors?.['required']">
-                                    Fuel type is required
-                                </small>
-                                </div>
-                            </div>
-                        </div>
+                        <app-form-select [enumValues]="fuelTypes" [label]="'Fuel Type*'"
+                            [formControl]="$any(addTruckForm.controls['fuelType'])"></app-form-select>
                     </div>
+
+                    <div class="col-4">
+                        <app-form-select [enumValues]="truckStatuses" [label]="'Status'"
+                            [formControl]="$any(addTruckForm.controls['status'])"></app-form-select>
+                    </div>
+
                 </div>
 
                 <div class="d-flex justify-content-center mb-3">
                     <div class="col-9">
                         <div class="form-floating">
-                            <input type="text" formControlName="owner" placeholder="Owner Firm" class="form-control">
-                            <label>Owner Firm</label>
+                            <app-text-input [label]="'Owner Firm'"
+                                [formControl]="$any(addTruckForm.controls['owner'])"></app-text-input>
                         </div>
                     </div>
                 </div>
@@ -98,76 +58,59 @@
                 <div class="row justify-content-between mb-3">
                     <div class="col-3">
                         <div class="form-floating">
-                            <input class="form-control" type="number" formControlName="engineCapacity"
-                                placeholder="Engine Capacity">
-                            <label>Engine Capacity</label>
+                            <app-text-input [label]="'Engine Capacity'" [type]="'number'"
+                                [formControl]="$any(addTruckForm.controls['engineCapacity'])"></app-text-input>
                         </div>
                     </div>
+
                     <div class="col-3">
                         <div class="form-floating">
-                            <input class="form-control" type="number" formControlName="horsePower"
-                                placeholder="Horse Power">
-                            <label>Horse Power</label>
+                            <app-text-input [label]="'Horse Power'" [type]="'number'"
+                                [formControl]="$any(addTruckForm.controls['horsePower'])"></app-text-input>
                         </div>
                     </div>
-                    <div class="col-3">
+
+                    <div class="col-6">
                         <div class="form-floating">
-                            <input class="form-control" type="date" formControlName="fabricationDate"
-                                placeholder="Fabrication Date">
-                            <label>Fabrication Date</label>
+                            <app-date-picker [label]="'Fabrication Date'"
+                                [isCheckDate]="false"
+                                [formControl]="$any(addTruckForm.controls['fabricationDate'])"></app-date-picker>
                         </div>
                     </div>
-                    <div class="col-3">
-                        <div class="form-floating me-3">
-                            <div class="row">
-                                <label>Status</label>
-                                <select formControlName="status" class="form-control-sm">
-                                    <option *ngFor="let status of truckStatuses" [ngValue]="status.value">
-                                        {{status.key}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <div class="justify-content-center d-flex">
-                    <h4>Expiration Dates</h4>
+                    <h4 class="text-primary">Expiration Dates</h4>
                 </div>
                 <hr>
+
                 <div class="row justify-content-between mb-3">
-                    <div class="col-3">
-                        <div class="form-floating">
-                            <input class="form-control" type="date" formControlName="itpExpirationDate"
-                                placeholder="ITP">
-                            <label>ITP</label>
-                        </div>
+                    <div class="col-6">
+                        <app-date-picker [label]="'ITP'"
+                            [formControl]="$any(addTruckForm.controls['itpExpirationDate'])"></app-date-picker>
                     </div>
-                    <div class="col-3">
-                        <div class="form-floating">
-                            <input class="form-control" type="date" formControlName="insurranceExpirationDate"
-                                placeholder="Insurance">
-                            <label>Insurance</label>
-                        </div>
+
+                    <div class="col-6">
+                        <app-date-picker [label]="'Insurance'"
+                            [formControl]="$any(addTruckForm.controls['insurranceExpirationDate'])"></app-date-picker>
                     </div>
-                    <div class="col-3">
-                        <div class="form-floating">
-                            <input class="form-control" type="date" formControlName="roVignetteExpirationDate"
-                                placeholder="RO Vignette">
-                            <label>RO Vignette</label>
-                        </div>
+                </div>
+                <div class="row justify-content-between mb-3">
+                    <div class="col-6">
+                        <app-date-picker [label]="'RoVignette'"
+                            [formControl]="$any(addTruckForm.controls['roVignetteExpirationDate'])"></app-date-picker>
                     </div>
-                    <div class="col-3">
-                        <div class="form-floating">
-                            <input class="form-control" type="date" formControlName="germanVignetterExpirationDate"
-                                placeholder="DE Vignette">
-                            <label>DE Vignette</label>
-                        </div>
+
+                    <div class="col-6">
+                        <app-date-picker [label]="'Next Revision'"
+                            [formControl]="$any(addTruckForm.controls['nextRevisionDate'])"></app-date-picker>
                     </div>
                 </div>
 
                 <div>
-                    <textarea formControlName="details" class="form-control" placeholder="Details" rows="3"></textarea>
+                    <app-textarea-input [label]="'Details'"
+                        [formControl]="$any(addTruckForm.controls['details'])"></app-textarea-input>
                 </div>
 
                 <hr>
@@ -178,6 +121,7 @@
                     <button class="btn btn-outline-info me-2" type="button" routerLink="/trucks"
                         routerLinkActive="active">Cancel</button>
                 </div>
+
             </form>
 
         </div>

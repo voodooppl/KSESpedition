@@ -2,7 +2,7 @@
 
 namespace API.Enums;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+// [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum DriverContractStatuses
 {
     Active,

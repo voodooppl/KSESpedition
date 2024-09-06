@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class UtilityService {
 
-  getEnumValues(enumObj: any): { key: string, value: number }[] {
-    return Object.keys(enumObj)
+  getEnumValues(enumType: any): { key: string, value: number }[] {
+    return Object.keys(enumType)
       .filter(key => isNaN(Number(key)))
-      .map(key => ({ key, value: enumObj[key] }));
+      .map(key => ({ key, value: enumType[key as keyof typeof enumType] }));
   }
 
   getStatusClass(status: string | undefined): string {

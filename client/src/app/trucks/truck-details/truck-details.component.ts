@@ -10,24 +10,27 @@ import { CanComponentDeactivate } from '../../_guards/prevent-unsaved-changes.gu
 import { UtilityService } from '../../_services/utility.service';
 import { FuelTypes } from '../../_models/fuelTypes';
 import { TruckStatuses } from '../../_models/truckStatuses';
+import { TextInputComponent } from '../../_forms/text-input/text-input.component';
+import { DatePickerComponent } from '../../_forms/date-picker/date-picker.component';
+import { TextareaInputComponent } from '../../_forms/textarea-input/textarea-input.component';
+import { FormSelectComponent } from "../../_forms/form-select/form-select.component";
 
 @Component({
   selector: 'app-truck-details',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, TabsModule, ReactiveFormsModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, TabsModule, ReactiveFormsModule,
+    TextInputComponent, DatePickerComponent, TextareaInputComponent, FormSelectComponent],
   templateUrl: './truck-details.component.html',
   styleUrl: './truck-details.component.css'
 })
 export class TruckDetailsComponent implements OnInit, CanComponentDeactivate {
-
-  private truckService = inject(TrucksService);
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toastr = inject(ToastrService);
   private utility = inject(UtilityService);
-
-  truck!: Truck;
+  
+  truckService = inject(TrucksService);
   truckForm!: FormGroup;
   isEditMode: boolean = false;
   isDeleting: boolean = false;
@@ -42,7 +45,6 @@ export class TruckDetailsComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit(): void {
-    // this.getTruckbyLicenceNumber();
     this.getTruckbyId();
     
     this.truckForm = this.fb.group({
@@ -70,6 +72,8 @@ export class TruckDetailsComponent implements OnInit, CanComponentDeactivate {
       job: [''],
       jobId: [''],
     })
+
+    this.truckForm.patchValue(this.truckService.currentTruck()!);
   }
 
   canDeactivate(){
@@ -93,23 +97,23 @@ export class TruckDetailsComponent implements OnInit, CanComponentDeactivate {
     if (!id) return;
     this.truckService.getTruckById(parseInt(id)).subscribe({
       next: truck => {
-        this.truck = truck;
+        this.truckForm.patchValue(truck);
       }
     })
   }
 
   setEditMode() {
     this.isEditMode = !this.isEditMode;
-    this.truckForm.reset(this.truck);
+    // this.truckForm.reset(this.truck);
   }
 
   updateTruck(){
     this.truckService.updateTruck(this.truckForm.value).subscribe({
       next: () => {
         this.getTruckbyId();
-        this.truckForm.reset(this.truck);
-        this.toastr.success('Camionul a fost modificat cu success.')
+        this.toastr.success('Camionul a fost modificat cu success.');
         this.isEditMode = false;
+        this.truckForm.reset(this.truckService.currentTruck());
       }
     });
   }
@@ -118,10 +122,10 @@ export class TruckDetailsComponent implements OnInit, CanComponentDeactivate {
     this.isDeleting = this.canDelete();
 
     if(this.isDeleting){
-      this.truckService.deleteTruck(this.truck.licenceNumber).subscribe({
+      this.truckService.deleteTruck(this.truckService.currentTruck()!.licenceNumber).subscribe({
         next: () => {
-          this.toastr.success('Camionul a fost sters.');
           this.isDeleting = false;
+          this.toastr.success('Camionul a fost sters.');
           this.router.navigateByUrl('trucks');
         }
       })
@@ -138,6 +142,6 @@ export class TruckDetailsComponent implements OnInit, CanComponentDeactivate {
   }
 
   get detailLines() {
-    return this.truck.details.split('\n');
+    return this.truckService.currentTruck()!.details.split('\n');
   }
 }

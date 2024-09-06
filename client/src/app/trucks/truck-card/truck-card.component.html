@@ -1,15 +1,39 @@
 <div class="card mt-4">
     <div class="icon-container text-primary text-center">
-        <i class="fa-solid fa-truck fa-6x mt-1"></i>
+        <i class="fa-solid fa-truck fa-5x mt-1"></i>
     </div>
 
     <div class="card-body">
-        <h5 class="card-title">{{ truck().licenceNumber | titlecase }}</h5>
-        <p class="card-text">Manufacturer: {{truck().manufacturer}}</p>
-        <p class="card-text">Model: {{truck().model}} </p>
-        <p class="card-text">Status: 
-            <span [ngClass]="utility.getStatusClass(truckStatuses[truck().status].key)">{{truckStatuses[truck().status].key}}</span>
-            </p>
+        <h5 class="card-title">{{ truck().licenceNumber | uppercase }} - Engine: {{truck().engineCapacity}}</h5>
+        <p class="card-text">{{truck().manufacturer}} - {{truck().model}}</p>
+        <p class="card-text">Status:
+            <strong>
+                <span
+                    [ngClass]="utility.getStatusClass(truckStatuses[truck().status].key)">{{truckStatuses[truck().status].key}}</span>
+            </strong>
+        </p>
+
+        <p class="card-text">ITP Expires:
+            <strong>
+                <span
+                    [ngClass]="utility.checkExpirationDate(truck().itpExpirationDate)">{{truck().itpExpirationDate}}</span>
+            </strong>
+        </p>
+
+        <p class="card-text">Insurance Expires:
+            <strong>
+                <span
+                    [ngClass]="utility.checkExpirationDate(truck().insurranceExpirationDate)">{{truck().insurranceExpirationDate}}</span>
+            </strong>
+        </p>
+
+        <p class="card-text">RoVignette Expires:
+            <strong>
+                <span
+                    [ngClass]="utility.checkExpirationDate(truck().roVignetteExpirationDate)">{{truck().roVignetteExpirationDate}}</span>
+            </strong>
+        </p>
+        
         <a class="btn btn-outline-info" routerLink="/truck-details/{{truck().id}}" routerLinkActive="active">Truck
             details</a>
     </div>

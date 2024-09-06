@@ -1,13 +1,13 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule, TitleCasePipe, formatDate } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UtilityService } from '../../_services/utility.service';
 import { DriverContractStatuses } from '../../_models/driverContractStatuses';
 import { DriversService } from '../../_services/drivers.service';
 import { Driver } from '../../_models/driver';
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CanComponentDeactivate } from '../../_guards/prevent-unsaved-changes.guard';
 import { TextInputComponent } from "../../_forms/text-input/text-input.component";
@@ -31,7 +31,7 @@ export class DriverDetailsComponent implements OnInit, CanComponentDeactivate {
   private toastr = inject(ToastrService);
   private fb = inject(FormBuilder);
   driversService = inject(DriversService);
-  private detailsControl: AbstractControl | null = null;
+  // private detailsControl: AbstractControl | null = null;
   utility = inject(UtilityService);
 
   driverForm!: FormGroup;
@@ -73,18 +73,18 @@ export class DriverDetailsComponent implements OnInit, CanComponentDeactivate {
 
     this.driverForm.patchValue(this.driversService.currentDriver()!);
     
-    this.detailsControl = this.driverForm.get('details');
+    // this.detailsControl = this.driverForm.get('details');
   }
 
   canDeactivate() {
     return this.driverForm.dirty;
   }
 
-  getDriverContractStatus(status: DriverContractStatuses | undefined) {
-    if (status == null) return;
+  // getDriverContractStatus(status: DriverContractStatuses | undefined) {
+  //   if (status == null) return;
 
-    return DriverContractStatuses[status];
-  }
+  //   return DriverContractStatuses[status];
+  // }
 
   getDriverByCnp() {
     const cnp = this.route.snapshot.paramMap.get('cnp');
@@ -98,15 +98,24 @@ export class DriverDetailsComponent implements OnInit, CanComponentDeactivate {
   setEditMode() {
     this.isEditMode = !this.isEditMode;
 
-    if (this.isEditMode) {
-      this.detailsControl?.enable();
-    } else {
-      this.detailsControl?.disable();
-    }
+    // if (this.isEditMode) {
+    //   this.detailsControl?.enable();
+    // } else {
+    //   this.detailsControl?.disable();
+    // }
   }
 
   updateDriver() {
-    this.driversService.updateDriver(this.driverForm.value).subscribe({
+    const formValues = this.driverForm.value;
+
+    const processedValues = {
+      ...formValues,
+      // driverLicenceExpirationDate: formValues.driverLicenceExpirationDate || null,
+      // idNumberExpirationDate: formValues.idNumberExpirationDate || null,
+      contractStatus: formValues.contractStatus.toString()
+    }
+
+    this.driversService.updateDriver(processedValues).subscribe({
       next: () => {
         this.getDriverByCnp();
         this.toastr.success('Soferul a fost modificat cu success.')

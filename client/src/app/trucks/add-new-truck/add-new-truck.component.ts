@@ -1,25 +1,26 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { TrucksService } from '../../_services/trucks.service';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule, DatePipe } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UtilityService } from '../../_services/utility.service';
 import { TruckStatuses } from '../../_models/truckStatuses';
 import { FuelTypes } from '../../_models/fuelTypes';
-import { AccountService } from '../../_services/account.service';
 import { CanComponentDeactivate } from '../../_guards/prevent-unsaved-changes.guard';
+import { TextInputComponent } from "../../_forms/text-input/text-input.component";
+import { FormSelectComponent } from "../../_forms/form-select/form-select.component";
+import { DatePickerComponent } from "../../_forms/date-picker/date-picker.component";
+import { TextareaInputComponent } from "../../_forms/textarea-input/textarea-input.component";
 
 @Component({
   selector: 'app-add-new-truck',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, TextInputComponent, FormSelectComponent, DatePickerComponent, TextareaInputComponent],
   templateUrl: './add-new-truck.component.html',
   styleUrl: './add-new-truck.component.css'
 })
 export class AddNewTruckComponent implements OnInit, CanComponentDeactivate {
   private trucksService = inject(TrucksService);
-  private accountService = inject(AccountService);
-  private datePipe = inject(DatePipe);
   private router = inject(Router);
   private fb = inject(FormBuilder);
   utility = inject(UtilityService);
@@ -37,24 +38,23 @@ export class AddNewTruckComponent implements OnInit, CanComponentDeactivate {
 
   ngOnInit(): void {
     this.addTruckForm = this.fb.group({
-      vin: ['', Validators.required],
-      licenceNumber: ['', Validators.required],
+      vin: ['', [Validators.required, Validators.minLength(17), Validators.maxLength(17)]],
+      licenceNumber: ['', [Validators.required, Validators.minLength(7)]],
       manufacturer: ['', Validators.required],
       model: ['', Validators.required],
-      kmOnBoard: [''],
+      kmOnBoard: ['0'],
       fuelType: ['', Validators.required],
       owner: [''],
-      engineCapacity: [''],
-      horsePower: [''],
+      engineCapacity: ['0'],
+      horsePower: ['0'],
       fabricationDate: [''],
-      status: [''],
+      status: ['0'],
       itpExpirationDate: [''],
       insurranceExpirationDate: [''],
       roVignetteExpirationDate: [''],
       germanVignetterExpirationDate: [''],
+      nextRevisionDate: [''],
       details: [''],
-      expenses: [''],
-      truckLogs: [''],
     })
   }
 
@@ -67,17 +67,15 @@ export class AddNewTruckComponent implements OnInit, CanComponentDeactivate {
 
     const processedValues = {
       ...formValues,
-      kmOnBoard: parseInt(formValues.kmOnBoard) || 0,
-      engineCapacity: parseInt(formValues.engineCapacity) || 0,
-      horsePower: parseInt(formValues.horsePower) || 0,
       fabricationDate: formValues.fabricationDate || null,
       itpExpirationDate: formValues.itpExpirationDate || null,
       insurranceExpirationDate: formValues.insurranceExpirationDate || null,
       roVignetteExpirationDate: formValues.roVignetteExpirationDate || null,
       germanVignetterExpirationDate: formValues.germanVignetterExpirationDate || null,
-      status: formValues.status || null,
+      nextRevisionDate: formValues.nextRevisionDate || null,
       fuelType: formValues.fuelType,
-      expenses: formValues.expenses || [],
+      status: formValues.status.value || null,
+      // expenses: formValues.expenses || [],
     }
 
     this.trucksService.addNewTruck(processedValues).subscribe({

@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { DriverParams } from '../_models/driverParams';
+import { PaginationService } from './pagination.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +13,10 @@ import { DriverParams } from '../_models/driverParams';
 export class DriversService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
-  // drivers = signal<Driver[]>([]);
+  paginationServices = inject(PaginationService);
   currentDriver = signal<Driver | null>(null);
-  paginatedResult = signal<PaginatedResult<Driver[]> | null>(null);
-  driverCache = new Map();
   driverParams = signal<DriverParams>(new DriverParams());
+  driverCache = new Map();
 
   resetDriverParams(){
     this.driverParams.set(new DriverParams());
@@ -25,37 +25,19 @@ export class DriversService {
   getDrivers() {
     const response = this.driverCache.get(Object.values(this.driverParams()).join('-'));
 
-    if (response) return this.setPaginatedResponse(response);
+    if (response) return this.paginationServices.setPaginatedResponse(response);
 
-    let params = this.setPaginationHeaders(this.driverParams().pageNumber, this.driverParams().pageSize);
+    let params = this.paginationServices.setPaginationHeaders(this.driverParams().pageNumber, this.driverParams().pageSize);
 
     params = params.append('orderBy', this.driverParams().orderBy);
     params = params.append('contractStatus', this.driverParams().contractStatus ?? '');
 
     return this.http.get<Driver[]>(this.baseUrl + 'drivers', {observe: 'response', params}).subscribe({
       next: response => {
-        this.setPaginatedResponse(response)
+        this.paginationServices.setPaginatedResponse(response)
         this.driverCache.set(Object.values(this.driverParams()).join('-'), response);
         }
     });
-  }
-
-  private setPaginatedResponse(response: HttpResponse<Driver[]>){
-    this.paginatedResult.set({
-      items: response.body as Driver[],
-      pagination: JSON.parse(response.headers.get('Pagination')!),
-    })
-  }
-
-  private setPaginationHeaders(pageNumber: number, pageSize: number){
-    let params = new HttpParams();
-
-    if(pageNumber && pageSize){
-      params = params.append('pageNumber', pageNumber);
-      params = params.append('pageSize', pageSize);
-    }
-
-    return params;
   }
 
   getDriverByCnp(cnp: string) {

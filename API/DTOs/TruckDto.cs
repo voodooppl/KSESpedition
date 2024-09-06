@@ -3,19 +3,19 @@ using API.Enums;
 
 namespace API.DTOs;
 
-public class UpdateTruckDto
+public class TruckDto
 {
     public int Id { get; set; }
     public required string VIN { get; set; }
     public required string LicenceNumber { get; set; }
-    public string? Manufacturer { get; set; }
-    public string? Model { get; set; }
+    public required string Manufacturer { get; set; }
+    public required string Model { get; set; }
     public int? EngineCapacity { get; set; }
     public int? HorsePower { get; set; }
-    public FuelTypes? FuelType { get; set; }
+    public string? FuelType { get; set; }
     public int? KmOnBoard { get; set; }
     public DateOnly? FabricationDate { get; set; }
-    public TruckStatuses? Status { get; set; }
+    public string? Status { get; set; }
     public string? Owner { get; set; }
     public DateOnly? ITPExpirationDate { get; set; }
     public DateOnly? InsurranceExpirationDate { get; set; }

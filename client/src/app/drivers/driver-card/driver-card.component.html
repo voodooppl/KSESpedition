@@ -9,10 +9,10 @@
         <p class="card-text">Contract Status:
             <strong>
                 <span
-                    [ngClass]="utility.getStatusClass(driver().contractStatus.toString())">{{driver().contractStatus}}</span>
+                    [ngClass]="utility.getStatusClass(getDriverContractStatus(driver().contractStatus))">{{getDriverContractStatus(driver().contractStatus)}}</span>
             </strong>
         </p>
-        <p class="card-text">Data expirare permis conducere:
+        <p class="card-text">Licence Expires:
             <strong>
                 <span
                     [ngClass]="utility.checkExpirationDate(driver().driverLicenceExpirationDate)">{{driver().driverLicenceExpirationDate}}</span>

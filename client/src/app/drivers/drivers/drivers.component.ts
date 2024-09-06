@@ -8,6 +8,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { UtilityService } from '../../_services/utility.service';
 import { DriverContractStatuses } from '../../_models/driverContractStatuses';
+import { PaginationService } from '../../_services/pagination.service';
 
 @Component({
   selector: 'app-drivers',
@@ -18,6 +19,7 @@ import { DriverContractStatuses } from '../../_models/driverContractStatuses';
 })
 export class DriversComponent implements OnInit{
   driversService = inject(DriversService);
+  paginationServices = inject(PaginationService);
   utility = inject(UtilityService);
   driverContracStatuses = this.utility.getEnumValues(DriverContractStatuses);
   isAddMode = false;
@@ -30,6 +32,7 @@ export class DriversComponent implements OnInit{
   ]
 
   ngOnInit(): void {
+    this.paginationServices.resetPagination();
     this.getDrivers();
   }
 

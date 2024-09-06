@@ -22,7 +22,6 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             { path: 'drivers', component: DriversComponent },
-            // { path: 'drivers/:id', component: DriverCardComponent },
             {
                 path: 'add-new-driver', component: AddNewDriverComponent,
                 canDeactivate: [preventUnsavedChangesGuard]

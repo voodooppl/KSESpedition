@@ -1,35 +1,39 @@
 @if(isAddMode) {
 <app-add-new-driver (cancelAddDriver)="cancelIsAddMode($event)"></app-add-new-driver>
 }@else{
-@if (driversService.paginatedResult()?.items) {
+@if (paginationServices.paginatedResult()?.items) {
 <div class="mx-auto">
-    <h1 class="text-primary text-center">All Drivers - {{driversService.paginatedResult()?.pagination?.totalItems}}</h1>
+    <h1 class="text-primary text-center">All Drivers - {{paginationServices.paginatedResult()?.pagination?.totalItems}}
+    </h1>
 </div>
 
 <div class="row mt-3">
 
     <div class="col-1">
-        <label class="me-2">Filter by</label>
+        <label class="me-2 pt-2">Filter by</label>
     </div>
-    <div class="col-2">
-        <select name="contractStatus" [(ngModel)]="driversService.driverParams().contractStatus" 
-        class="form-control" (ngModelChange)="getDrivers()">
+    <div class="col-2 d-flex">
+        <label class="me-2 pt-2">Status</label>
+        <select name="contractStatus" [(ngModel)]="driversService.driverParams().contractStatus" class="form-control"
+            (ngModelChange)="getDrivers()">
             @for (status of driverContracStatuses; track status.value) {
-                <option [value]="status.value">{{status.key}}</option>
+            <option [value]="status.value">{{status.key}}</option>
             }
         </select>
     </div>
-    <div class="col-1">
+
+    <div class="col-1 pt-2">
         <label class="me-2">Order by</label>
     </div>
     <div class="col-2">
-        <select name="orderBy" [(ngModel)]="driversService.driverParams().orderBy" 
-        class="form-control" (ngModelChange)="getDrivers()">
+        <select name="orderBy" [(ngModel)]="driversService.driverParams().orderBy" class="form-control"
+            (ngModelChange)="getDrivers()">
             @for (status of orderCategories; track status.value) {
-                <option [value]="status.value">{{status.display}}</option>
+            <option [value]="status.value">{{status.display}}</option>
             }
         </select>
     </div>
+
     <div class="col-2">
         <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset filters</button>
     </div>
@@ -37,27 +41,25 @@
 </div>
 
 <div class="row">
-    <ng-container *ngFor="let driver of driversService.paginatedResult()?.items">
+    <ng-container *ngFor="let driver of paginationServices.paginatedResult()?.items">
         <div class="col-3">
             <app-driver-card [driver]="driver"></app-driver-card>
         </div>
     </ng-container>
 </div>
+
 }@else {
 <p>No drivers found.</p>
 }
 
-@if (driversService.paginatedResult()?.pagination) {
-    <div class="d-flex justify-content-center mt-5">
-        <pagination [boundaryLinks]="true" 
-            [totalItems]="driversService.paginatedResult()?.pagination!.totalItems"
-            [itemsPerPage]="driversService.paginatedResult()?.pagination!.itemsPerPage"
-            [(ngModel)]="driversService.paginatedResult()?.pagination!.currentPage"
-            (pageChanged)="pageChanged($event)"
-            [maxSize]="10"
-            previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
-        </pagination>
-    </div>
+@if (paginationServices.paginatedResult()?.pagination) {
+<div class="d-flex justify-content-center mt-5">
+    <pagination [boundaryLinks]="true" [totalItems]="paginationServices.paginatedResult()?.pagination!.totalItems"
+        [itemsPerPage]="paginationServices.paginatedResult()?.pagination!.itemsPerPage"
+        [(ngModel)]="paginationServices.paginatedResult()?.pagination!.currentPage" (pageChanged)="pageChanged($event)"
+        [maxSize]="10" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+</div>
 }
 
 <div class="container">

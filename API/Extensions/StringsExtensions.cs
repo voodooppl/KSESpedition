@@ -5,7 +5,7 @@ namespace API.Extensions;
 
 public static class StringExtensions
 {
-    public static string ToTitleCase(this string value)
+    public static string? ToTitleCase(this string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return value;
         var titleString = new StringBuilder();

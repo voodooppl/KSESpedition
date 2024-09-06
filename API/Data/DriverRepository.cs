@@ -42,16 +42,16 @@ public class DriverRepository(DataContext context, IMapper mapper) : IDriversRep
         return driver;
     }
 
-    public async Task<PagedList<Driver>> GetDriversAsync(DriverParams userParams)
+    public async Task<PagedList<Driver>> GetDriversAsync(DriverParams driverParams)
     {
         var query = context.Drivers.AsQueryable();
 
-        if (userParams.ContractStatus != null)
+        if (driverParams.ContractStatus != null)
         {
-            query = query.Where(q => q.ContractStatus == userParams.ContractStatus);
+            query = query.Where(q => q.ContractStatus == driverParams.ContractStatus);
         }
 
-        query = userParams.OrderBy switch
+        query = driverParams.OrderBy switch
         {
             "idExpirationDate" => query.OrderBy(u => u.IdNumberExpirationDate),
             "driverLicenceExpirationDate" => query.OrderBy(u => u.DriverLicenceExpirationDate),
@@ -61,7 +61,7 @@ public class DriverRepository(DataContext context, IMapper mapper) : IDriversRep
         };
 
         return await PagedList<Driver>.CreateAsync(query.ProjectTo<Driver>(mapper.ConfigurationProvider),
-                 userParams.PageNumber, userParams.PageSize);
+                 driverParams.PageNumber, driverParams.PageSize);
     }
 
     public async Task<bool> SaveAllAsync()

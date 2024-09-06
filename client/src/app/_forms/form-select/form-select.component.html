@@ -1,8 +1,16 @@
 <div [ngClass]="isEditable() ? 'form-component-select-disabled' : 'form-component-select'">
     <label>{{label()}}</label>
-    <select [formControl]="control" class="form-control" [ngClass]="utility.getStatusClass(control.value)">
-        <option *ngFor="let status of enumValues()" [value]="status.key" [ngClass]="utility.getStatusClass(status.key)">
-            {{status.key}}
+    <select [formControl]="control" class="form-control" 
+    [class.is-invalid]="control.invalid && (control.dirty || control.touched)"
+    [ngClass]="utility.getStatusClass(control.value)"
+    >
+        <option *ngFor="let item of enumValues()" [value]="item.value"
+            [ngClass]="utility.getStatusClass(item.key)"
+            >
+            {{item.key}}
         </option>
     </select>
+
+    <div *ngIf="control.hasError('required')" class="invalid-feedback text-start">
+        {{label()}} is required</div>
 </div>
